@@ -1,0 +1,28 @@
+package provision
+
+import "core:encoding/uuid"
+
+WorldData :: struct {
+    using entity: EntityData,
+    entities: map[ENTITY_ID]EntityData,
+    messages: [dynamic]MessageData
+//    Public Property AdFinishes As DateTimeOffset?
+}
+
+worldData_ctor :: proc(data: ^WorldData) {
+    entityData_ctor(&data.entity)
+    data.entities = make(map[ENTITY_ID]EntityData)
+    data.messages = make([dynamic]MessageData)
+}
+
+worldData_dtor :: proc(data: ^WorldData) {
+    entityData_dtor(&data.entity)
+    for _, &entity in data.entities {
+        entityData_dtor(&entity)
+    }
+    delete(data.entities)
+    for &message in data.messages {
+        messageData_dtor(&message)
+    }
+    delete(data.messages)
+}
