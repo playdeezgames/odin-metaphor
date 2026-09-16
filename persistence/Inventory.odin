@@ -40,12 +40,16 @@ InventoryInitializer :: distinct proc(^Inventory)
 //         End Get
 //     End Property
 
-//     Public Overrides Sub Remove()
-//         For Each item In Items
-//             item.Remove()
-//         Next
-//         _data.Entities.Remove(EntityId)
-//     End Sub
+inventory_remove :: proc(entity: ^Inventory) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    //TODO
+    //For Each item In Items
+    //    item.Remove()
+    //Next
+    //_data.Entities.Remove(EntityId)
+}
 
 //     Friend Shared Function Create(world As IWorld, data As WorldData, inventoryId As Guid?) As IInventory
 //         Return If(inventoryId.HasValue, New Inventory(world, data, inventoryId.Value), Nothing)

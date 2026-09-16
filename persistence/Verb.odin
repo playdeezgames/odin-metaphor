@@ -22,9 +22,13 @@ VerbInitializer :: distinct proc(^Verb)
 //         End Get
 //     End Property
 
-//     Public Overrides Sub Remove()
-//         _data.Entities.Remove(EntityId)
-//     End Sub
+verb_remove :: proc(entity: ^Verb) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    //TODO
+    //         _data.Entities.Remove(EntityId)
+}
 
 //     Friend Shared Function Create(world As IWorld, data As WorldData, verbId As Guid) As IVerb
 //         Return New Verb(world, data, verbId)

@@ -8,70 +8,57 @@ Feature :: distinct MetaphorEntity(FEATURE_ID)
 
 FeatureInitializer :: distinct proc(^Feature)
 
-// Friend Class Feature
-//     Inherits MetaphorEntity
-//     Implements IFeature
+feature_getLocation :: proc(entity: ^Feature) -> (Location, bool) {
+    if entityId, ok:= entity_getYoke(entity.entityData, YOKES_LOCATION); ok {
+        return world_getLocation(entity.worldData, LOCATION_ID(entityId))
+    }
+    return {}, false
+}
 
-//     Private Sub New(world As IWorld, data As WorldData, featureId As Guid)
-//         MyBase.New(world, data, featureId)
-//     End Sub
+feature_getDestination :: proc(entity: ^Feature) -> (Location, bool) {
+    if entityId, ok:= entity_getYoke(entity.entityData, YOKES_DESTINATION); ok {
+        return world_getLocation(entity.worldData, LOCATION_ID(entityId))
+    }
+    return {}, false
+}
 
-//     Public ReadOnly Property Location As ILocation Implements IFeature.Location
-//         Get
-//             Return Persistence.Location.Create(World, _data, GetYoke(Yokes.LOCATION))
-//         End Get
-//     End Property
+feature_setDestination :: proc (entity: ^Feature, location: ^Location) {
+    if location != nil {
+        entity_setYoke(entity.entityData, YOKES_DESTINATION, provision.ENTITY_ID(location.entityId))
+    } else {
+        entity_clearYoke(entity.entityData, YOKES_DESTINATION)
+    }
+}
 
-//     Public Property Destination As ILocation Implements IFeature.Destination
-//         Get
-//             Return World.GetLocation(GetYoke(Yokes.DESTINATION))
-//         End Get
-//         Set(value As ILocation)
-//             If value IsNot Nothing Then
-//                 SetYoke(Yokes.DESTINATION, value.EntityId)
-//             Else
-//                 ClearYoke(Yokes.DESTINATION)
-//             End If
-//         End Set
-//     End Property
+feature_getTwin :: proc(entity: ^Feature) -> (Feature, bool) {
+    if entityId, ok:= entity_getYoke(entity.entityData, YOKES_TWIN); ok {
+        return world_getFeature(entity.worldData, FEATURE_ID(entityId))
+    }
+    return {}, false
+}
 
-//     Public Property Twin As IFeature Implements IFeature.Twin
-//         Get
-//             Return World.GetFeature(GetYoke(Yokes.TWIN))
-//         End Get
-//         Set(value As IFeature)
-//             If value IsNot Nothing Then
-//                 SetYoke(Yokes.TWIN, value.EntityId)
-//             Else
-//                 ClearYoke(Yokes.TWIN)
-//             End If
-//         End Set
-//     End Property
+feature_setTwin :: proc (entity: ^Feature, feature: ^Feature) {
+    if feature != nil {
+        entity_setYoke(entity.entityData, YOKES_TWIN, provision.ENTITY_ID(feature.entityId))
+    } else {
+        entity_clearYoke(entity.entityData, YOKES_TWIN)
+    }
+}
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
-
-//     Public Overrides Sub Remove()
-//         If Not Exists Then
-//             Return
-//         End If
-//         Location.RemoveFromYokage(Yokages.FEATURES, EntityId)
-//         For Each verb In Verbs
-//             verb.Remove()
-//         Next
-//         Inventory.Remove()
-//         Dim twin = Me.Twin
-//         _data.Entities.Remove(EntityId)
-//         twin?.Remove()
-//     End Sub
-
-//     Friend Shared Function Create(world As IWorld, data As WorldData, featureId As Guid?) As IFeature
-//         If featureId.HasValue Then
-//             Return New Feature(world, data, featureId.Value)
-//         End If
-//         Return Nothing
-//     End Function
-// End Class
+feature_remove :: proc(entity: ^Feature) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    if location, ok:= feature_getLocation(entity); ok {
+        entity_removeFromYokage(location.entityData, YOKAGES_FEATURES, provision.ENTITY_ID(entity.entityId))
+    }
+    verbs:= metaphorEntity_getVerbs(entity)
+    defer delete(verbs)
+    for &verb in verbs {
+        verb_remove(&verb)
+    }
+    if twin, ok:= feature_getTwin(entity); ok {
+        entity_clearYoke(entity.entityData, YOKES_TWIN)
+        feature_remove(&twin)
+    }
+}

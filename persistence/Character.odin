@@ -8,55 +8,49 @@ Character :: distinct MetaphorEntity(CHARACTER_ID)
 
 CharacterInitializer :: distinct proc(^Character)
 
-// Friend Class Character
-//     Inherits MetaphorEntity
-//     Implements ICharacter
+character_getLocation :: proc(entity: ^Character) -> (Location, bool) {
+    if entityId, ok := entity_getYoke(entity.entityData, YOKES_LOCATION); ok {
+        return world_getLocation(entity.worldData, LOCATION_ID(entityId))
+    }
+    return {}, false
+}
 
-//     Private Sub New(world As IWorld, data As WorldData, characterId As Guid)
-//         MyBase.New(world, data, characterId)
-//     End Sub
+character_setLocation :: proc(entity: ^Character, location: ^Location) {
+    if oldLocation, ok:= character_getLocation(entity); ok {
+        entity_removeFromYokage(oldLocation.entityData, YOKAGES_CHARACTERS, provision.ENTITY_ID(entity.entityId))
+    }
+    if location != nil {
+        entity_setYoke(entity.entityData, YOKES_LOCATION, provision.ENTITY_ID(location.entityId))
+        entity_addToYokage(location.entityData, YOKAGES_CHARACTERS, provision.ENTITY_ID(entity.entityId))
+    } else {
+        entity_clearYoke(entity.entityData, YOKES_LOCATION)
+    }
+}
 
-//     Public Property Location As ILocation Implements ICharacter.Location
-//         Get
-//             Return Persistence.Location.Create(World, _data, GetYoke(Yokes.LOCATION))
-//         End Get
-//         Set(value As ILocation)
-//             If value.EntityId <> Location.EntityId Then
-//                 Location.RemoveFromYokage(Yokages.CHARACTERS, EntityId)
-//                 SetYoke(Yokes.LOCATION, value.EntityId)
-//                 Location.AddToYokage(Yokages.CHARACTERS, EntityId)
-//             End If
-//         End Set
-//     End Property
+character_getDialogMode :: proc(entity: ^Character) -> (string, bool) {
+    return entity_getMetadata(entity.entityData, METADATAS_DIALOG_MODE)
+}
 
-//     Public Property DialogMode As String Implements ICharacter.DialogMode
-//         Get
-//             Return TryGetMetadata(Metadatas.DIALOG_MODE)
-//         End Get
-//         Set(value As String)
-//             SetMetadata(Metadatas.DIALOG_MODE, value)
-//         End Set
-//     End Property
+character_setDialogMode :: proc(entity: ^Character, dialogMode: string) {
+    entity_setMetadata(entity.entityData, METADATAS_DIALOG_MODE, dialogMode)
+}
 
-//     Public ReadOnly Property Map As IMap Implements ICharacter.Map
-//         Get
-//             Return Location.Map
-//         End Get
-//     End Property
+character_getMap :: proc(entity: ^Character) -> (Map, bool) {
+    if location, ok := character_getLocation(entity); ok {
+        return location_getMap(&location)
+    }
+    return {}, false
+}
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
-
-//     Public Overrides Sub Remove()
-//         Inventory.Remove()
-//         Location.RemoveFromYokage(Yokages.CHARACTERS, EntityId)
-//         _data.Entities.Remove(EntityId)
-//     End Sub
-
-//     Friend Shared Function Create(world As IWorld, data As WorldData, characterId As Guid?) As ICharacter
-//         Return If(characterId.HasValue, New Character(world, data, characterId.Value), Nothing)
-//     End Function
-// End Class
+character_remove :: proc(entity: ^Character) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    inventory:= metaphorEntity_getInventory(entity)
+    inventory_remove(&inventory)
+    character_setLocation(entity, nil)
+    if entityData, ok:= entity.worldData.entities[provision.ENTITY_ID(entity.entityId)]; ok {
+        provision.entityData_dtor(&entityData)
+        delete_key(&entity.worldData.entities, provision.ENTITY_ID(entity.entityId))
+    }
+}
