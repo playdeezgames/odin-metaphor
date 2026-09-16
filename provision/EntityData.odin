@@ -27,7 +27,8 @@ EntityData :: struct {
     yokages: map[YOKAGE_ID]ENTITY_ID_SET
 }
 
-entityData_ctor :: proc(data: ^EntityData) {
+entityData_ctor :: proc(data: ^EntityData, entityType: string) {
+    data.entityType = entityType
     data.metadatas = make(map[METADATA_ID]string)
     data.counters = make(map[COUNTER_ID]i32)
     data.counterMinimums = make(map[COUNTER_ID]i32)

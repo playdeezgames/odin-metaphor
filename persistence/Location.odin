@@ -1,6 +1,7 @@
 package persistence
 
 import "../provision"
+import "core:encoding/uuid"
 
 LOCATION_ID :: distinct provision.ENTITY_ID
 
@@ -8,133 +9,122 @@ Location :: distinct MetaphorEntity(LOCATION_ID)
 
 LocationInitializer :: distinct proc(^Location)
 
-// Friend Class Location
-//     Inherits MetaphorEntity
-//     Implements ILocation
+location_getFeatures :: proc(entity: ^Location) -> []Feature {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_FEATURES)
+    result:= make([dynamic]Feature, 0, len(yokage))
+    for featureId, _ in yokage {
+        if feature, ok:= world_getFeature(entity.worldData, FEATURE_ID(featureId)); ok {
+            append(&result, feature)
+        }
+    }
+    return result[:]
+}
 
-//     Private Sub New(world As IWorld, data As WorldData, locationId As Guid)
-//         MyBase.New(world, data, locationId)
-//     End Sub
+location_hasFeatures :: proc(entity: ^Location) -> bool {
+   return len(entity_getYokage(entity.entityData, YOKAGES_FEATURES)) > 0
+}
 
-//     Public ReadOnly Property Features As IEnumerable(Of IFeature) Implements ILocation.Features
-//         Get
-//             Return GetYokage(Yokages.FEATURES).Select(Function(x) Feature.Create(World, _data, x))
-//         End Get
-//     End Property
+location_getCharacters :: proc(entity: ^Location) -> []Character {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_CHARACTERS)
+    result:= make([dynamic]Character, 0, len(yokage))
+    for characterId, _ in yokage {
+        if character, ok:= world_getCharacter(entity.worldData, CHARACTER_ID(characterId)); ok {
+            append(&result, character)
+        }
+    }
+    return result[:]
+}
 
-//     Public ReadOnly Property HasFeatures As Boolean Implements ILocation.HasFeatures
-//         Get
-//             Return GetYokage(Yokages.FEATURES).Any()
-//         End Get
-//     End Property
+location_hasCharacters :: proc(entity: ^Location) -> bool {
+   return len(entity_getYokage(entity.entityData, YOKAGES_CHARACTERS)) > 0
+}
 
-//     Public ReadOnly Property Characters As IEnumerable(Of ICharacter) Implements ILocation.Characters
-//         Get
-//             Return GetYokage(Yokages.CHARACTERS).Select(Function(x) Character.Create(World, _data, x))
-//         End Get
-//     End Property
+location_getMap :: proc(entity: ^Location) -> (result: Map, ok: bool) {
+    entityId : provision.ENTITY_ID
+    entityId, ok = entity_getYoke(entity.entityData, YOKES_MAP)
+    if !ok {
+        return {}, false
+    }
+    return world_getMap(entity.worldData, MAP_ID(entityId))
+}
 
-//     Public Property Map As IMap Implements ILocation.Map
-//         Get
-//             Return World.GetMap(GetYoke(Yokes.MAP))
-//         End Get
-//         Set(value As IMap)
-//             Map?.RemoveFromYokage(Yokages.LOCATIONS, EntityId)
-//             If value IsNot Nothing Then
-//                 SetYoke(Yokes.MAP, value.EntityId)
-//             Else
-//                 ClearYoke(Yokes.MAP)
-//             End If
-//             Map?.AddToYokage(Yokages.LOCATIONS, EntityId)
-//         End Set
-//     End Property
+location_setMap :: proc(entity: ^Location, newMap: ^Map) {
+    if oldMap, ok:= location_getMap(entity); ok {
+        entity_removeFromYokage(oldMap.entityData, YOKAGES_LOCATIONS, provision.ENTITY_ID(entity.entityId))
+    }
+    if newMap != nil {
+        entity_setYoke(entity.entityData, YOKES_MAP, provision.ENTITY_ID(newMap.entityId))
+        entity_addToYokage(newMap.entityData, YOKAGES_LOCATIONS, provision.ENTITY_ID(entity.entityId))
+    } else {
+        entity_clearYoke(entity.entityData, YOKES_MAP)
+    }
+}
 
-//     Public ReadOnly Property Column As Integer Implements ILocation.Column
-//         Get
-//             Return GetCounter(Counters.COLUMN)
-//         End Get
-//     End Property
+location_getColumn :: proc(entity: ^Location) -> (result: i32, ok: bool) {
+    return entity_getCounter(entity.entityData, COUNTERS_COLUMN)
+}
 
-//     Public ReadOnly Property Row As Integer Implements ILocation.Row
-//         Get
-//             Return GetCounter(Counters.ROW)
-//         End Get
-//     End Property
+location_getRow :: proc(entity: ^Location) -> (result: i32, ok: bool) {
+    return entity_getCounter(entity.entityData, COUNTERS_ROW)
+}
 
-//     Public ReadOnly Property HasCharacters As Boolean Implements ILocation.HasCharacters
-//         Get
-//             Return GetYokage(Yokages.CHARACTERS).Any
-//         End Get
-//     End Property
+location_remove :: proc(entity: ^Location) {
+    location_setMap(entity, nil)
+    entity.entityData = nil
+    delete_key(&entity.worldData.entities, provision.ENTITY_ID(entity.entityId))
+}
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
+location_createCharacter :: proc(entity: ^Location, entitySubtype: string, name: string, initialize: CharacterInitializer) -> Character {
+    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    entity.worldData.entities[entityId] = {}
+    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_CHARACTER)
+    result, _ := world_getCharacter(entity.worldData, CHARACTER_ID(entityId))
+    entity_setYoke(result.entityData, YOKES_LOCATION, provision.ENTITY_ID(entity.entityId))
+    entity_addToYokage(entity.entityData, YOKAGES_CHARACTERS, entityId)
+    entity_setMetadata(result.entityData, METADATAS_NAME, name)
+    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    if initialize != nil {
+        initialize(&result)
+    }
+    return result
+}
 
-//     Public Overrides Sub Remove()
-//         Dim map = Me.Map
-//         If map IsNot Nothing Then
-//             map.RemoveFromYokage(Yokages.LOCATIONS, EntityId)
-//         End If
-//         _data.Entities.Remove(EntityId)
-//     End Sub
+location_createFeature :: proc(entity: ^Location, entitySubtype: string, name: string, initialize: FeatureInitializer) -> Feature {
+    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    entity.worldData.entities[entityId] = {}
+    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_FEATURE)
+    result, _ := world_getFeature(entity.worldData, FEATURE_ID(entityId))
+    entity_setYoke(result.entityData, YOKES_LOCATION, provision.ENTITY_ID(entity.entityId))
+    entity_addToYokage(entity.entityData, YOKAGES_FEATURES, entityId)
+    entity_setMetadata(result.entityData, METADATAS_NAME, name)
+    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    if initialize != nil {
+        initialize(&result)
+    }
+    return result
+}
 
-//     Friend Shared Function Create(world As IWorld, data As WorldData, locationId As Guid?) As ILocation
-//         Return If(locationId.HasValue, New Location(world, data, locationId.Value), Nothing)
-//     End Function
+location_getOtherCharacters :: proc(entity: ^Location, character: ^Character) -> []Character {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_CHARACTERS)
+    result:= make([dynamic]Character, 0, len(yokage))
+    for characterId, _ in yokage {
+        if characterId == provision.ENTITY_ID(character.entityId) {
+            continue
+        }
+        if character, ok:= world_getCharacter(entity.worldData, CHARACTER_ID(characterId)); ok {
+            append(&result, character)
+        }
+    }
+    return result[:]
+}
 
-//     Public Function CreateCharacter(entitySubtype As String, name As String, Optional initialize As CharacterInitializer = Nothing) As ICharacter Implements ILocation.CreateCharacter
-//         Dim characterId = Guid.NewGuid
-//         _data.Entities(characterId) = New EntityData With
-//             {
-//                 .EntityType = EntityTypes.CHARACTER_ENTITY,
-//                 .Yokes = New Dictionary(Of String, Guid) From
-//                 {
-//                     {Yokes.LOCATION, EntityId}
-//                 },
-//                 .Metadatas = New Dictionary(Of String, String) From
-//                 {
-//                     {Metadatas.ENTITY_SUBTYPE, entitySubtype},
-//                     {Metadatas.NAME, name},
-//                     {Metadatas.DIALOG_MODE, String.Empty}
-//                 }
-//             }
-//         AddToYokage(Yokages.CHARACTERS, characterId)
-//         Dim result = Character.Create(World, _data, characterId)
-//         initialize?.Invoke(result)
-//         Return result
-//     End Function
-
-//     Public Function CreateFeature(entitySubtype As String, name As String, Optional initializer As FeatureInitializer = Nothing) As IFeature Implements ILocation.CreateFeature
-//         Dim featureId = Guid.NewGuid
-//         _data.Entities(featureId) = New EntityData With
-//             {
-//                 .EntityType = EntityTypes.FEATURE_ENTITY,
-//                 .Yokes = New Dictionary(Of String, Guid) From
-//                 {
-//                     {Yokes.LOCATION, EntityId}
-//                 },
-//                 .Metadatas = New Dictionary(Of String, String) From
-//                 {
-//                     {Metadatas.ENTITY_SUBTYPE, entitySubtype},
-//                     {Metadatas.NAME, name}
-//                 }
-//             }
-//         AddToYokage(Yokages.FEATURES, featureId)
-//         Dim result As IFeature = Feature.Create(World, _data, featureId)
-//         initializer?.Invoke(result)
-//         Return result
-//     End Function
-
-//     Public Function GetOtherCharacters(character As ICharacter) As IEnumerable(Of ICharacter) Implements ILocation.GetOtherCharacters
-//         Return GetYokage(Yokages.CHARACTERS).
-//             Where(Function(id) id <> character.EntityId).
-//             Select(Function(x) Persistence.Character.Create(World, _data, x))
-//     End Function
-
-//     Public Function HasOtherCharacters(character As ICharacter) As Boolean Implements ILocation.HasOtherCharacters
-//         Return GetYokage(Yokages.CHARACTERS).Any(Function(x) x <> character.EntityId)
-//     End Function
-// End Class
+location_hasOtherCharacters :: proc(entity: ^Location, character: ^Character) -> bool {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_CHARACTERS)
+    for characterId, _ in yokage {
+        if characterId == provision.ENTITY_ID(character.entityId) {
+            continue
+        }
+        return true
+    }
+    return false
+}

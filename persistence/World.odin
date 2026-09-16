@@ -62,9 +62,9 @@ world_addMessage :: proc{world_addMessage_default, world_addMessage_full}
 world_createLocation_full :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, initializer: LocationInitializer) -> Location {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     world.entities[entityId] = {}
-    provision.entityData_ctor(&world.entities[entityId])
+    provision.entityData_ctor(&world.entities[entityId], ENTITYTYPES_LOCATION)
     result, _ := world_getLocation(world, LOCATION_ID(entityId))
-    result.entityData.entityType = entitySubtype
+    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)
     entity_addToYokage(world, YOKAGES_LOCATIONS, entityId)
     if initializer != nil {
@@ -111,6 +111,30 @@ world_getVerb :: proc(world: ^provision.WorldData, verbId: VERB_ID) -> (result: 
         entityId = verbId,
         worldData = world,
         entityData = &world.entities[provision.ENTITY_ID(verbId)]
+    }
+    return result, true
+}
+
+world_getFeature :: proc(world: ^provision.WorldData, featureId: FEATURE_ID) -> (result: Feature, ok: bool) {
+    if provision.ENTITY_ID(featureId) not_in world.entities {
+        return {}, false
+    }
+    result = Feature {
+        entityId = featureId,
+        worldData = world,
+        entityData = &world.entities[provision.ENTITY_ID(featureId)]
+    }
+    return result, true
+}
+
+world_getMap :: proc(world: ^provision.WorldData, mapId: MAP_ID) -> (result: Map, ok: bool) {
+    if provision.ENTITY_ID(mapId) not_in world.entities {
+        return {}, false
+    }
+    result = Map {
+        entityId = mapId,
+        worldData = world,
+        entityData = &world.entities[provision.ENTITY_ID(mapId)]
     }
     return result, true
 }

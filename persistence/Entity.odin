@@ -241,13 +241,12 @@ entity_clearYoke :: proc(entity: ^provision.EntityData, yokeId: provision.YOKE_I
     delete_key(&entity.yokes, yokeId)
 }
 
-entity_getYokage :: proc(entity: ^provision.EntityData, yokageId: provision.YOKAGE_ID) -> provision.ENTITY_ID_SET {
-    result, ok:= entity.yokages[yokageId]
+entity_getYokage :: proc(entity: ^provision.EntityData, yokageId: provision.YOKAGE_ID) -> ^provision.ENTITY_ID_SET {
+    _, ok:= entity.yokages[yokageId]
     if !ok {
-        result = make(provision.ENTITY_ID_SET)
-        entity.yokages[yokageId] = result
+        entity.yokages[yokageId] = make(provision.ENTITY_ID_SET)
     }
-    return result
+    return &entity.yokages[yokageId]
 }
 
 entity_addToYokage :: proc(entity: ^provision.EntityData, yokageId: provision.YOKAGE_ID, identifier: provision.ENTITY_ID) {
@@ -257,7 +256,7 @@ entity_addToYokage :: proc(entity: ^provision.EntityData, yokageId: provision.YO
 
 entity_removeFromYokage :: proc(entity: ^provision.EntityData, yokageId: provision.YOKAGE_ID, identifier: provision.ENTITY_ID) {
     yokage:= entity_getYokage(entity, yokageId)
-    delete_key(&yokage, identifier)
+    delete_key(yokage, identifier)
 }
 
 entity_minimizeCounter :: proc(entity: ^provision.EntityData, counterId: provision.COUNTER_ID) -> (i32, bool) {
