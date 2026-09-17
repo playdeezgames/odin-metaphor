@@ -1,6 +1,7 @@
 package persistence
 
 import "../provision"
+import "core:encoding/uuid"
 
 INVENTORY_ID :: distinct provision.ENTITY_ID
 
@@ -8,25 +9,68 @@ Inventory :: distinct MetaphorEntity(INVENTORY_ID)
 
 InventoryInitializer :: distinct proc(^Inventory)
 
-// Friend Class Inventory
-//     Inherits MetaphorEntity
-//     Implements IInventory
+inventory_hasItems :: proc(entity: ^Inventory) -> bool {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_ITEMS)
+    return len(yokage) > 0
+}
 
-//     Public Sub New(world As IWorld, data As WorldData, inventoryId As Guid)
-//         MyBase.New(world, data, inventoryId)
-//     End Sub
+inventory_getItems :: proc(entity: ^Inventory) -> [dynamic]Item {
+    yokage:= entity_getYokage(entity.entityData, YOKAGES_ITEMS)
+    result:= make([dynamic]Item, 0, len(yokage))
+    for itemId, _ in yokage {
+        if item, ok:= world_getItem(entity.worldData, ITEM_ID(itemId)); ok {
+            append(&result, item)
+        }
+    }
+    return result
+}
 
-//     Public ReadOnly Property HasItems As Boolean Implements IInventory.HasItems
-//         Get
-//             Return GetYokage(Yokages.ITEMS).Any()
-//         End Get
-//     End Property
+inventory_remove :: proc(entity: ^Inventory) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    for &item in inventory_getItems(entity) {
+        item_remove(&item)
+    }
+    metaphorEntity_remove(entity)
+}
 
-//     Public ReadOnly Property Items As IEnumerable(Of IItem) Implements IInventory.Items
-//         Get
-//             Return GetYokage(Yokages.ITEMS).Select(Function(x) Item.Create(World, _data, x))
-//         End Get
-//     End Property
+inventory_createItem :: proc(entity: ^Inventory, entitySubtype: string, name: string, initialize: ItemInitializer) -> Item {
+    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    entity.worldData.entities[entityId] = {}
+    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_ITEM)
+    result, _ := world_getItem(entity.worldData, ITEM_ID(entityId))
+    item_setContainer(&result, entity)
+    entity_setMetadata(result.entityData, METADATAS_NAME, name)
+    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    if initialize != nil {
+        initialize(&result)
+    }
+    return result
+}
+
+inventory_hasItemOfSubtype :: proc(entity: ^Inventory, entitySubtype: string) -> bool {
+    items:= inventory_getItems(entity)
+    defer delete(items)
+    for &item in items {
+        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok && subType == entitySubtype {
+            return true
+        }
+    }
+    return false
+}
+
+inventory_getItemsOfSubtype :: proc(entity: ^Inventory, entitySubtype: string) -> [dynamic]Item {
+    items:= inventory_getItems(entity)
+    defer delete(items)
+    result:= make([dynamic]Item)
+    for &item in items {
+        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok && subType == entitySubtype {
+            append(&result, item)
+        }
+    }
+    return result
+}
 
 //     Public ReadOnly Property ItemStacks As IEnumerable(Of IItemStack) Implements IInventory.ItemStacks
 //         Get
@@ -34,53 +78,3 @@ InventoryInitializer :: distinct proc(^Inventory)
 //         End Get
 //     End Property
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
-
-inventory_remove :: proc(entity: ^Inventory) {
-    if entity == nil || entity.entityData == nil {
-        return
-    }
-    //TODO
-    //For Each item In Items
-    //    item.Remove()
-    //Next
-    //_data.Entities.Remove(EntityId)
-}
-
-//     Friend Shared Function Create(world As IWorld, data As WorldData, inventoryId As Guid?) As IInventory
-//         Return If(inventoryId.HasValue, New Inventory(world, data, inventoryId.Value), Nothing)
-//     End Function
-
-//     Public Function CreateItem(entitySubtype As String, name As String, Optional initializer As ItemInitializer = Nothing) As IItem Implements IInventory.CreateItem
-//         Dim itemId = Guid.NewGuid
-//         _data.Entities(itemId) = New TGGD.Provision.EntityData With
-//             {
-//                 .EntityType = EntityTypes.ITEM_ENTITY,
-//                 .Metadatas = New Dictionary(Of String, String) From
-//                 {
-//                     {Metadatas.ENTITY_SUBTYPE, entitySubtype},
-//                     {Metadatas.NAME, name}
-//                 },
-//                 .Yokes = New Dictionary(Of String, Guid) From
-//                 {
-//                     {Yokes.CONTAINER, EntityId}
-//                 }
-//             }
-//         AddToYokage(Yokages.ITEMS, itemId)
-//         Dim result As IItem = Item.Create(World, _data, itemId)
-//         initializer?.Invoke(result)
-//         Return result
-//     End Function
-
-//     Public Function HasItemOfSubtype(entitySubtype As String) As Boolean Implements IInventory.HasItemOfSubtype
-//         Return Items.Any(Function(x) x.EntitySubtype = entitySubtype)
-//     End Function
-
-//     Public Function GetItemsOfSubtype(entitySubtype As String) As IEnumerable(Of IItem) Implements IInventory.GetItemsOfSubtype
-//         Return Items.Where(Function(x) x.EntitySubtype = entitySubtype)
-//     End Function
-// End Class

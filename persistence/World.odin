@@ -197,8 +197,14 @@ world_clearAvatar :: proc(world: ^provision.WorldData) {
 //         Return Map.Create(Me, worldData, mapId)
 //     End Function
 
-//     Public Function GetItem(itemId As Guid?) As IItem Implements IWorld.GetItem
-//         Return Item.Create(Me, worldData, itemId)
-//     End Function
-// End Class
-
+world_getItem :: proc(world: ^provision.WorldData, itemId: ITEM_ID) -> (result: Item, ok: bool) {
+    if provision.ENTITY_ID(itemId) not_in world.entities {
+        return {}, false
+    }
+    result = Item {
+        entityId = itemId,
+        worldData = world,
+        entityData = &world.entities[provision.ENTITY_ID(itemId)]
+    }
+    return result, true
+}
