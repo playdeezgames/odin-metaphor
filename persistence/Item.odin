@@ -8,44 +8,30 @@ Item :: distinct MetaphorEntity(ITEM_ID)
 
 ItemInitializer :: distinct proc(^Item)
 
-// Friend Class Item
-//     Inherits MetaphorEntity
-//     Implements IItem
+item_getContainer :: proc(entity: ^Item) -> (Inventory, bool) {
+    if entityId, ok:= entity_getYoke(entity.entityData, YOKES_CONTAINER); ok {
+        return world_getInventory(entity.worldData, INVENTORY_ID(entityId))
+    }
+    return {}, false
+}
 
-//     Private Sub New(world As IWorld, data As WorldData, itemId As Guid)
-//         MyBase.New(world, data, itemId)
-//     End Sub
+item_setContainer :: proc(entity: ^Item, container: ^Inventory) {
+    if inventory, ok:= item_getContainer(entity); ok {
+        entity_removeFromYokage(inventory.entityData, YOKAGES_ITEMS, provision.ENTITY_ID(entity.entityId))
+    }
+    if container!= nil {
+        entity_addToYokage(container.entityData, YOKAGES_ITEMS, provision.ENTITY_ID(entity.entityId))
+        entity_setYoke(entity.entityData, YOKES_CONTAINER, provision.ENTITY_ID(container.entityId))
+    } else {
+        entity_clearYoke(entity.entityData, YOKES_CONTAINER)
+    }
+}
 
-//     Public Property Container As IInventory Implements IItem.Container
-//         Get
-//             Return Persistence.Inventory.Create(World, _data, GetYoke(Yokes.CONTAINER))
-//         End Get
-//         Set(value As IInventory)
-//             Container?.RemoveFromYokage(Yokages.ITEMS, EntityId)
-//             If value IsNot Nothing Then
-//                 SetYoke(Yokes.CONTAINER, value.EntityId)
-//                 Container.AddToYokage(Yokages.ITEMS, EntityId)
-//             Else
-//                 ClearYoke(Yokes.CONTAINER)
-//             End If
-//         End Set
-//     End Property
+item_remove :: proc(entity: ^Item) {
+    if entity == nil || entity.entityData == nil {
+        return
+    }
+    item_setContainer(entity, nil)
+    metaphorEntity_remove(entity)
+}
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
-
-//     Public Overrides Sub Remove()
-//         Container.RemoveFromYokage(Yokages.ITEMS, EntityId)
-//         _data.Entities.Remove(EntityId)
-//     End Sub
-
-//     Friend Shared Function Create(world As IWorld, data As WorldData, itemId As Guid?) As IItem
-//         Return If(
-//             itemId.HasValue,
-//             New Item(world, data, itemId.Value),
-//             Nothing)
-//     End Function
-// End Class
