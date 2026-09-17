@@ -8,14 +8,6 @@ Map :: distinct MetaphorEntity(MAP_ID)
 
 MapInitializer :: distinct proc(^Map)
 
-// Friend Class Map
-//     Inherits MetaphorEntity
-//     Implements IMap
-
-//     Private Sub New(world As IWorld, data As WorldData, entityId As Guid)
-//         MyBase.New(world, data, entityId)
-//     End Sub
-
 //     Public ReadOnly Property Size As (Columns As Integer, Rows As Integer) Implements IMap.Size
 //         Get
 //             Return (GetCounter(Counters.COLUMNS), GetCounter(Counters.ROWS))
@@ -28,22 +20,9 @@ MapInitializer :: distinct proc(^Map)
 //         End Get
 //     End Property
 
-//     Protected Overrides ReadOnly Property Data As EntityData
-//         Get
-//             Return _data.Entities(EntityId)
-//         End Get
-//     End Property
-
 //     Public Overrides Sub Remove()
 //         'TODO: remove locations
 //     End Sub
-
-//     Friend Shared Function Create(world As World, data As WorldData, mapId As Guid?) As IMap
-//         If Not mapId.HasValue Then
-//             Return Nothing
-//         End If
-//         Return New Map(world, data, mapId.Value)
-//     End Function
 
 //     Public Function CreateLocation(locationType As String, name As String, position As (Column As Integer, Row As Integer), Optional initializer As LocationInitializer = Nothing) As ILocation Implements IMap.CreateLocation
 //         Dim locationId = Guid.NewGuid
@@ -70,4 +49,3 @@ MapInitializer :: distinct proc(^Map)
 //     Public Function GetLocation(column As Integer, row As Integer) As ILocation Implements IMap.GetLocation
 //         Return Locations.SingleOrDefault(Function(x) x.Column = column AndAlso x.Row = row)
 //     End Function
-// End Class

@@ -168,34 +168,21 @@ world_clearAvatar :: proc(world: ^provision.WorldData) {
     entity_clearYoke(world, YOKES_AVATAR)
 }
 
-//     Public Function GetFeature(featureId As Guid?) As IFeature Implements IWorld.GetFeature
-//         Return Feature.Create(Me, worldData, featureId)
-//     End Function
-
-//     Public Function CreateMap(entitySubtype As String, name As String, size As (Columns As Integer, Rows As Integer), Optional initializer As MapInitializer = Nothing) As IMap Implements IWorld.CreateMap
-//         Dim mapId = Guid.NewGuid
-//         worldData.Entities(mapId) = New EntityData With
-//             {
-//                 .EntityType = EntityTypes.MAP_ENTITY,
-//                 .Metadatas = New Dictionary(Of String, String) From
-//                 {
-//                     {Metadatas.ENTITY_SUBTYPE, entitySubtype},
-//                     {Metadatas.NAME, name}
-//                 },
-//                 .Counters = New Dictionary(Of String, Integer) From
-//                 {
-//                     {Counters.COLUMNS, size.Columns},
-//                     {Counters.ROWS, size.Rows}
-//                 }
-//             }
-//         Dim result = Map.Create(Me, worldData, mapId)
-//         initializer?.Invoke(result)
-//         Return result
-//     End Function
-
-//     Public Function GetMap(mapId As Guid?) As IMap Implements IWorld.GetMap
-//         Return Map.Create(Me, worldData, mapId)
-//     End Function
+world_createMap :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
+    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    world.entities[entityId] = {}
+    provision.entityData_ctor(&world.entities[entityId], ENTITYTYPES_MAP)
+    result, _ := world_getMap(world, MAP_ID(entityId))
+    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    entity_setMetadata(result.entityData, METADATAS_NAME, name)
+    entity_setCounter(result.entityData, COUNTERS_COLUMNS, columns)
+    entity_setCounter(result.entityData, COUNTERS_ROWS, rows)
+    entity_addToYokage(world, YOKAGES_MAPS, entityId)
+    if initializer != nil {
+        initializer(&result)
+    }
+    return result
+}
 
 world_getItem :: proc(world: ^provision.WorldData, itemId: ITEM_ID) -> (result: Item, ok: bool) {
     if provision.ENTITY_ID(itemId) not_in world.entities {
