@@ -8,7 +8,6 @@ Verb :: distinct MetaphorEntity(VERB_ID)
 
 VerbInitializer :: distinct proc(^Verb)
 
-
 verb_remove :: proc(entity: ^Verb) {
     if entity == nil || entity.entityData == nil {
         return
