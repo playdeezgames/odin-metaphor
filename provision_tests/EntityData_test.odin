@@ -1,10 +1,11 @@
-package provision
+package provision_tests
 
 import "core:testing"
+import "../provision"
 
 @(test)
 test_raw_EntityData_values :: proc(t: ^testing.T) {
-    sut: EntityData
+    sut: provision.EntityData
     testing.expect(t, sut.entityType == "")
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)
@@ -21,8 +22,8 @@ test_raw_EntityData_values :: proc(t: ^testing.T) {
 @(test)
 test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     ENTITY_TYPE :: "ENTITY_TYPE"
-    sut: EntityData
-    entityData_ctor(&sut, ENTITY_TYPE)
+    sut: provision.EntityData
+    provision.entityData_ctor(&sut, ENTITY_TYPE)
     testing.expect(t, sut.entityType == ENTITY_TYPE)
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)
@@ -35,7 +36,7 @@ test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     testing.expect(t, len(sut.yokes) == 0)
     testing.expect(t, len(sut.yokages) == 0)
 
-    entityData_dtor(&sut)
+    provision.entityData_dtor(&sut)
     testing.expect(t, sut.entityType == "")
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)

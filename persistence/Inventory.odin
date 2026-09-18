@@ -72,9 +72,24 @@ inventory_getItemsOfSubtype :: proc(entity: ^Inventory, entitySubtype: string) -
     return result
 }
 
-//     Public ReadOnly Property ItemStacks As IEnumerable(Of IItemStack) Implements IInventory.ItemStacks
-//         Get
-//             Return Items.GroupBy(Function(x) x.EntitySubtype).Select(Function(x) ItemStack.Create(Me, x.Key))
-//         End Get
-//     End Property
-
+inventory_getItemStacks :: proc(entity: ^Inventory) -> [dynamic]ItemStack {
+    stackMap:= make(map[string]ItemStack)
+    defer delete(stackMap)
+    items:= inventory_getItems(entity)
+    defer delete(items)
+    for &item in items {
+        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok {
+            if _, ok = stackMap[subType]; !ok {
+                stackMap[subType] = ItemStack {
+                    inventory = entity^,
+                    itemType = subType
+                }
+            }
+        }
+    }
+    result:= make([dynamic]ItemStack, 0, len(stackMap))
+    for _, itemStack in stackMap {
+        append(&result, itemStack)
+    }
+    return result
+}
