@@ -20,4 +20,5 @@ main :: proc () {
     for &character in characters {
         fmt.println(persistence.metaphorEntity_getName(&character))
     }
+    persistence.world_save(&world, "output.json")
 }

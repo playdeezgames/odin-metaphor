@@ -6,7 +6,6 @@ WorldData :: struct {
     using entity: EntityData,
     entities: map[ENTITY_ID]EntityData,
     messages: [dynamic]MessageData
-//    Public Property AdFinishes As DateTimeOffset?
 }
 
 worldData_ctor :: proc(data: ^WorldData, entityType: string) {

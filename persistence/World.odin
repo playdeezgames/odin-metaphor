@@ -19,7 +19,8 @@ world_getMessages :: proc(world: ^provision.WorldData) -> [dynamic]provision.Mes
 }
 
 world_save :: proc(world: ^provision.WorldData, filename: string) -> bool {
-    if json_data, err := json.marshal(world, allocator = context.temp_allocator); err == nil {
+    json_data, err := json.marshal(world, allocator = context.temp_allocator)
+    if err == nil {
         return os.write_entire_file(filename, json_data) == nil
     }
     return false

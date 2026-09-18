@@ -42,6 +42,7 @@ entityData_ctor :: proc(data: ^EntityData, entityType: string) {
 }
 
 entityData_dtor :: proc(data: ^EntityData) {
+    data.entityType = ""
     delete(data.metadatas)
     delete(data.counters)
     delete(data.counterMinimums)
