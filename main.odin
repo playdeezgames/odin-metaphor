@@ -4,6 +4,7 @@ import "provision"
 import "persistence"
 import "core:fmt"
 import "core:encoding/uuid"
+import "extension"
 
 COUNTER_SATIETY : provision.COUNTER_ID : "SATIETY"
 
@@ -11,14 +12,14 @@ main :: proc () {
     world: provision.WorldData
     provision.worldData_ctor(&world, persistence.ENTITYTYPES_WORLD)
     defer provision.worldData_dtor(&world)
-    location:= persistence.world_createLocation(&world, "Blue Room", "The Blue Room", nil)
-    verb:= persistence.metaphorEntity_createVerb(&location, "POOP", "Poop!")
-    character:= persistence.location_createCharacter(&location, "N00B", "N00b", nil)
-    persistence.location_createCharacter(&location, "NPC", "Gorachan", nil)
+    extension.world_initialize(&world)
+
+    character, _:= persistence.world_getAvatar(&world)
+    location, _ := persistence.character_getLocation(&character)
     characters:= persistence.location_getOtherCharacters(&location, &character)
     defer delete(characters)
     for &character in characters {
-        fmt.println(persistence.metaphorEntity_getName(&character))
+        name, _:= persistence.metaphorEntity_getName(&character)
+        fmt.println(name)
     }
-    persistence.world_save(&world, "output.json")
 }
