@@ -1,36 +1,49 @@
 package persistence
 
-// Friend Class ItemStack
-//     Implements IItemStack
+ItemStack :: struct {
+    inventory: Inventory,
+    itemType: string
+}
 
-//     Private Sub New(inventory As IInventory, itemType As String)
-//         Me.Container = inventory
-//         Me.ItemType = itemType
-//     End Sub
+itemStack_getContainer :: proc(itemStack: ^ItemStack) -> Inventory {
+    return itemStack.inventory
+}
 
-//     Public ReadOnly Property Container As IInventory Implements IItemStack.Container
+itemStack_getItemType :: proc(itemStack: ^ItemStack) -> string {
+    return itemStack.itemType
+}
 
-//     Public ReadOnly Property ItemType As String Implements IItemStack.ItemType
+itemStack_getItems :: proc(itemStack: ^ItemStack) -> [dynamic]Item {
+    candidates := inventory_getItems(&itemStack.inventory)
+    defer delete(candidates)
+    result:= make([dynamic]Item)
+    for &candidate in candidates {
+        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+            append(&result, candidate)
+        }
+    }
+    return result
+}
 
-//     Public ReadOnly Property Items As IEnumerable(Of IItem) Implements IItemStack.Items
-//         Get
-//             Return Container.Items.Where(Function(x) x.EntitySubtype = ItemType)
-//         End Get
-//     End Property
+itemStack_getCount :: proc(itemStack: ^ItemStack) -> int {
+    candidates := inventory_getItems(&itemStack.inventory)
+    defer delete(candidates)
+    result: int = 0
+    for &candidate in candidates {
+        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+            result += 1
+        }
+    }
+    return result
+}
 
-//     Public ReadOnly Property Count As Integer Implements IItemStack.Count
-//         Get
-//             Return Container.Items.Count(Function(x) x.EntitySubtype = ItemType)
-//         End Get
-//     End Property
-
-//     Public ReadOnly Property Top As IItem Implements IItemStack.Top
-//         Get
-//             Return Container.Items.FirstOrDefault(Function(x) x.EntitySubtype = ItemType)
-//         End Get
-//     End Property
-
-//     Friend Shared Function Create(inventory As IInventory, itemType As String) As IItemStack
-//         Return New ItemStack(inventory, itemType)
-//     End Function
-// End Class
+itemStack_getTop :: proc(itemStack: ^ItemStack) -> (Item, bool) {
+    candidates := inventory_getItems(&itemStack.inventory)
+    defer delete(candidates)
+    for &candidate in candidates {
+        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+            return candidate, true
+        }
+    }
+    return {}, false
+}
