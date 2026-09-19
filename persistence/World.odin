@@ -61,9 +61,9 @@ world_addMessage_default :: proc(world: ^provision.WorldData, text: string) {
 world_addMessage :: proc{world_addMessage_default, world_addMessage_full}
 
 world_createLocation_full :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, initializer: LocationInitializer) -> Location {
-    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
-    provision.entity_data_ctor(&world.entities[entityId], ENTITYTYPES_LOCATION)
+    provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_LOCATION)
     result, _ := world_getLocation(world, LOCATION_ID(entityId))
     entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)
@@ -81,79 +81,79 @@ world_createLocation_default :: proc(world: ^provision.WorldData, entitySubtype:
 world_createLocation :: proc{world_createLocation_default, world_createLocation_full}
 
 world_getLocation :: proc(world: ^provision.WorldData, locationId: LOCATION_ID) -> (result: Location, ok: bool) {
-    if provision.ENTITY_ID(locationId) not_in world.entities {
+    if provision.Entity_Id(locationId) not_in world.entities {
         return {}, false
     }
     result = Location {
         entityId = locationId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(locationId)]
+        entityData = &world.entities[provision.Entity_Id(locationId)]
     }
     return result, true
 }
 
 world_getInventory :: proc(world: ^provision.WorldData, inventoryId: INVENTORY_ID) -> (result: Inventory, ok: bool) {
-    if provision.ENTITY_ID(inventoryId) not_in world.entities {
+    if provision.Entity_Id(inventoryId) not_in world.entities {
         return {}, false
     }
     result = Inventory {
         entityId = inventoryId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(inventoryId)]
+        entityData = &world.entities[provision.Entity_Id(inventoryId)]
     }
     return result, true
 }
 
 world_getVerb :: proc(world: ^provision.WorldData, verbId: VERB_ID) -> (result: Verb, ok: bool) {
-    if provision.ENTITY_ID(verbId) not_in world.entities {
+    if provision.Entity_Id(verbId) not_in world.entities {
         return {}, false
     }
     result = Verb {
         entityId = verbId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(verbId)]
+        entityData = &world.entities[provision.Entity_Id(verbId)]
     }
     return result, true
 }
 
 world_getFeature :: proc(world: ^provision.WorldData, featureId: FEATURE_ID) -> (result: Feature, ok: bool) {
-    if provision.ENTITY_ID(featureId) not_in world.entities {
+    if provision.Entity_Id(featureId) not_in world.entities {
         return {}, false
     }
     result = Feature {
         entityId = featureId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(featureId)]
+        entityData = &world.entities[provision.Entity_Id(featureId)]
     }
     return result, true
 }
 
 world_getMap :: proc(world: ^provision.WorldData, mapId: MAP_ID) -> (result: Map, ok: bool) {
-    if provision.ENTITY_ID(mapId) not_in world.entities {
+    if provision.Entity_Id(mapId) not_in world.entities {
         return {}, false
     }
     result = Map {
         entityId = mapId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(mapId)]
+        entityData = &world.entities[provision.Entity_Id(mapId)]
     }
     return result, true
 }
 
 world_getCharacter :: proc(world: ^provision.WorldData, characterId: CHARACTER_ID) -> (result: Character, ok: bool) {
-    if provision.ENTITY_ID(characterId) not_in world.entities {
+    if provision.Entity_Id(characterId) not_in world.entities {
         return {}, false
     }
     result = Character {
         entityId = characterId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(characterId)]
+        entityData = &world.entities[provision.Entity_Id(characterId)]
     }
     return result, true
 }
 
 world_getAvatar :: proc(world: ^provision.WorldData) -> (result: Character, ok: bool) {
-    entityId: provision.ENTITY_ID
+    entityId: provision.Entity_Id
     entityId, ok = entity_getYoke(world, YOKES_AVATAR)
     if !ok {
         return {}, false
@@ -162,7 +162,7 @@ world_getAvatar :: proc(world: ^provision.WorldData) -> (result: Character, ok: 
 }
 
 world_setAvatar :: proc(world: ^provision.WorldData, characterId: CHARACTER_ID) {
-    entity_setYoke(world, YOKES_AVATAR, provision.ENTITY_ID(characterId))
+    entity_setYoke(world, YOKES_AVATAR, provision.Entity_Id(characterId))
 }
 
 world_clearAvatar :: proc(world: ^provision.WorldData) {
@@ -170,9 +170,9 @@ world_clearAvatar :: proc(world: ^provision.WorldData) {
 }
 
 world_createMap :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
-    entityId:= provision.ENTITY_ID(uuid.generate_v4())
+    entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
-    provision.entity_data_ctor(&world.entities[entityId], ENTITYTYPES_MAP)
+    provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_MAP)
     result, _ := world_getMap(world, MAP_ID(entityId))
     entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)
@@ -186,13 +186,13 @@ world_createMap :: proc(world: ^provision.WorldData, entitySubtype: string, name
 }
 
 world_getItem :: proc(world: ^provision.WorldData, itemId: ITEM_ID) -> (result: Item, ok: bool) {
-    if provision.ENTITY_ID(itemId) not_in world.entities {
+    if provision.Entity_Id(itemId) not_in world.entities {
         return {}, false
     }
     result = Item {
         entityId = itemId,
         worldData = world,
-        entityData = &world.entities[provision.ENTITY_ID(itemId)]
+        entityData = &world.entities[provision.Entity_Id(itemId)]
     }
     return result, true
 }

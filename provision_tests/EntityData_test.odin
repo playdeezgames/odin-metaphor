@@ -23,7 +23,7 @@ test_raw_EntityData_values :: proc(t: ^testing.T) {
 test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     ENTITY_TYPE :: "ENTITY_TYPE"
     sut: provision.Entity_Data
-    provision.entity_data_ctor(&sut, ENTITY_TYPE)
+    provision.entity_data_init(&sut, ENTITY_TYPE)
     testing.expect(t, sut.entityType == ENTITY_TYPE)
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)
@@ -36,7 +36,7 @@ test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     testing.expect(t, len(sut.yokes) == 0)
     testing.expect(t, len(sut.yokages) == 0)
 
-    provision.entity_data_dtor(&sut)
+    provision.entity_data_destroy(&sut)
     testing.expect(t, sut.entityType == "")
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)

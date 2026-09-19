@@ -2,7 +2,7 @@ package persistence
 
 import "../provision"
 
-CHARACTER_ID :: distinct provision.ENTITY_ID
+CHARACTER_ID :: distinct provision.Entity_Id
 
 Character :: distinct MetaphorEntity(CHARACTER_ID)
 
@@ -17,11 +17,11 @@ character_getLocation :: proc(entity: ^Character) -> (Location, bool) {
 
 character_setLocation :: proc(entity: ^Character, location: ^Location) {
     if oldLocation, ok:= character_getLocation(entity); ok {
-        entity_removeFromYokage(oldLocation.entityData, YOKAGES_CHARACTERS, provision.ENTITY_ID(entity.entityId))
+        entity_removeFromYokage(oldLocation.entityData, YOKAGES_CHARACTERS, provision.Entity_Id(entity.entityId))
     }
     if location != nil {
-        entity_setYoke(entity.entityData, YOKES_LOCATION, provision.ENTITY_ID(location.entityId))
-        entity_addToYokage(location.entityData, YOKAGES_CHARACTERS, provision.ENTITY_ID(entity.entityId))
+        entity_setYoke(entity.entityData, YOKES_LOCATION, provision.Entity_Id(location.entityId))
+        entity_addToYokage(location.entityData, YOKAGES_CHARACTERS, provision.Entity_Id(entity.entityId))
     } else {
         entity_clearYoke(entity.entityData, YOKES_LOCATION)
     }
@@ -50,8 +50,8 @@ character_remove :: proc(entity: ^Character) {
     inventory_remove(&inventory)
     character_setLocation(entity, nil)
     metaphorEntity_remove(entity)
-    if entityData, ok:= entity.worldData.entities[provision.ENTITY_ID(entity.entityId)]; ok {
-        provision.entity_data_dtor(&entityData)
-        delete_key(&entity.worldData.entities, provision.ENTITY_ID(entity.entityId))
+    if entityData, ok:= entity.worldData.entities[provision.Entity_Id(entity.entityId)]; ok {
+        provision.entity_data_destroy(&entityData)
+        delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))
     }
 }

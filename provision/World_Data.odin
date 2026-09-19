@@ -4,20 +4,20 @@ import "core:encoding/uuid"
 
 WorldData :: struct {
     using entity: Entity_Data,
-    entities: map[ENTITY_ID]Entity_Data,
+    entities: map[Entity_Id]Entity_Data,
     messages: [dynamic]MessageData
 }
 
 worldData_ctor :: proc(data: ^WorldData, entityType: string) {
-    entity_data_ctor(&data.entity, entityType)
-    data.entities = make(map[ENTITY_ID]Entity_Data)
+    entity_data_init(&data.entity, entityType)
+    data.entities = make(map[Entity_Id]Entity_Data)
     data.messages = make([dynamic]MessageData)
 }
 
 worldData_dtor :: proc(data: ^WorldData) {
-    entity_data_dtor(&data.entity)
+    entity_data_destroy(&data.entity)
     for _, &entity in data.entities {
-        entity_data_dtor(&entity)
+        entity_data_destroy(&entity)
     }
     delete(data.entities)
     for &message in data.messages {

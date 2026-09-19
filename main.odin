@@ -5,7 +5,7 @@ import "persistence"
 import "core:fmt"
 import "extension"
 
-COUNTER_SATIETY : provision.COUNTER_ID : "SATIETY"
+COUNTER_SATIETY : provision.Counter_Id : "SATIETY"
 
 main :: proc () {
     for _ in 0..<6 {

@@ -2,7 +2,7 @@ package persistence
 
 import "../provision"
 
-VERB_ID :: distinct provision.ENTITY_ID
+VERB_ID :: distinct provision.Entity_Id
 
 Verb :: distinct MetaphorEntity(VERB_ID)
 

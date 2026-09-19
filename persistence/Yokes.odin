@@ -2,10 +2,10 @@ package persistence
 
 import "../provision"
 
-YOKES_AVATAR      : provision.YOKE_ID : "AVATAR"
-YOKES_CONTAINER   : provision.YOKE_ID : "CONTAINER"
-YOKES_DESTINATION : provision.YOKE_ID : "DESTINATION"
-YOKES_INVENTORY   : provision.YOKE_ID : "INVENTORY"
-YOKES_LOCATION    : provision.YOKE_ID : "LOCATION"
-YOKES_MAP         : provision.YOKE_ID : "MAP"
-YOKES_TWIN        : provision.YOKE_ID : "TWIN"
+YOKES_AVATAR      : provision.Yoke_Id : "AVATAR"
+YOKES_CONTAINER   : provision.Yoke_Id : "CONTAINER"
+YOKES_DESTINATION : provision.Yoke_Id : "DESTINATION"
+YOKES_INVENTORY   : provision.Yoke_Id : "INVENTORY"
+YOKES_LOCATION    : provision.Yoke_Id : "LOCATION"
+YOKES_MAP         : provision.Yoke_Id : "MAP"
+YOKES_TWIN        : provision.Yoke_Id : "TWIN"

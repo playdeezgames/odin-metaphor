@@ -2,7 +2,7 @@ package persistence
 
 import "../provision"
 
-FEATURE_ID :: distinct provision.ENTITY_ID
+FEATURE_ID :: distinct provision.Entity_Id
 
 Feature :: distinct MetaphorEntity(FEATURE_ID)
 
@@ -24,7 +24,7 @@ feature_getDestination :: proc(entity: ^Feature) -> (Location, bool) {
 
 feature_setDestination :: proc (entity: ^Feature, location: ^Location) {
     if location != nil {
-        entity_setYoke(entity.entityData, YOKES_DESTINATION, provision.ENTITY_ID(location.entityId))
+        entity_setYoke(entity.entityData, YOKES_DESTINATION, provision.Entity_Id(location.entityId))
     } else {
         entity_clearYoke(entity.entityData, YOKES_DESTINATION)
     }
@@ -39,7 +39,7 @@ feature_getTwin :: proc(entity: ^Feature) -> (Feature, bool) {
 
 feature_setTwin :: proc (entity: ^Feature, feature: ^Feature) {
     if feature != nil {
-        entity_setYoke(entity.entityData, YOKES_TWIN, provision.ENTITY_ID(feature.entityId))
+        entity_setYoke(entity.entityData, YOKES_TWIN, provision.Entity_Id(feature.entityId))
     } else {
         entity_clearYoke(entity.entityData, YOKES_TWIN)
     }
@@ -50,7 +50,7 @@ feature_remove :: proc(entity: ^Feature) {
         return
     }
     if location, ok:= feature_getLocation(entity); ok {
-        entity_removeFromYokage(location.entityData, YOKAGES_FEATURES, provision.ENTITY_ID(entity.entityId))
+        entity_removeFromYokage(location.entityData, YOKAGES_FEATURES, provision.Entity_Id(entity.entityId))
     }
     verbs:= metaphorEntity_getVerbs(entity)
     defer delete(verbs)
