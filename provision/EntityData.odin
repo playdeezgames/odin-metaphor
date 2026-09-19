@@ -41,7 +41,7 @@ entity_data_ctor :: proc(data: ^Entity_Data, entityType: string) {
     data.yokages = make(map[YOKAGE_ID]ENTITY_ID_SET)
 }
 
-entityData_dtor :: proc(data: ^Entity_Data) {
+entity_data_dtor :: proc(data: ^Entity_Data) {
     data.entityType = ""
     delete(data.metadatas)
     delete(data.counters)

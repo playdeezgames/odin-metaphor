@@ -164,7 +164,7 @@ metaphorEntity_createVerb :: proc{metaphorEntity_createVerb_default, metaphorEnt
 
 metaphorEntity_remove :: proc(entity: ^MetaphorEntity($T)) {
     if entityData, ok:= entity.worldData.entities[provision.ENTITY_ID(entity.entityId)]; ok {
-        provision.entityData_dtor(&entityData)
+        provision.entity_data_dtor(&entityData)
         delete_key(&entity.worldData.entities, provision.ENTITY_ID(entity.entityId))
     }
 }

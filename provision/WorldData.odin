@@ -15,9 +15,9 @@ worldData_ctor :: proc(data: ^WorldData, entityType: string) {
 }
 
 worldData_dtor :: proc(data: ^WorldData) {
-    entityData_dtor(&data.entity)
+    entity_data_dtor(&data.entity)
     for _, &entity in data.entities {
-        entityData_dtor(&entity)
+        entity_data_dtor(&entity)
     }
     delete(data.entities)
     for &message in data.messages {

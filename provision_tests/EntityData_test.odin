@@ -36,7 +36,7 @@ test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     testing.expect(t, len(sut.yokes) == 0)
     testing.expect(t, len(sut.yokages) == 0)
 
-    provision.entityData_dtor(&sut)
+    provision.entity_data_dtor(&sut)
     testing.expect(t, sut.entityType == "")
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)

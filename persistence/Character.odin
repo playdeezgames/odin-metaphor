@@ -51,7 +51,7 @@ character_remove :: proc(entity: ^Character) {
     character_setLocation(entity, nil)
     metaphorEntity_remove(entity)
     if entityData, ok:= entity.worldData.entities[provision.ENTITY_ID(entity.entityId)]; ok {
-        provision.entityData_dtor(&entityData)
+        provision.entity_data_dtor(&entityData)
         delete_key(&entity.worldData.entities, provision.ENTITY_ID(entity.entityId))
     }
 }
