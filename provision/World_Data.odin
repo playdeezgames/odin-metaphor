@@ -8,8 +8,8 @@ WorldData :: struct {
     messages: [dynamic]MessageData
 }
 
-worldData_ctor :: proc(data: ^WorldData, entityType: string) {
-    entity_data_init(&data.entity, entityType)
+worldData_ctor :: proc(data: ^WorldData, entity_type: string) {
+    entity_data_init(&data.entity, entity_type)
     data.entities = make(map[Entity_Id]Entity_Data)
     data.messages = make([dynamic]MessageData)
 }

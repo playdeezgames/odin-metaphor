@@ -3,11 +3,11 @@ package persistence
 import "../provision"
 
 entity_clear :: proc(entity: ^provision.Entity_Data) {
-    clear(&entity.counterMaximums)
-    clear(&entity.counterMinimums)
+    clear(&entity.counter_maximums)
+    clear(&entity.counter_minimums)
     clear(&entity.counters)
-    clear(&entity.dimensionMaximums)
-    clear(&entity.dimensionMinimums)
+    clear(&entity.dimension_maximums)
+    clear(&entity.dimension_minimums)
     clear(&entity.dimensions)
     clear(&entity.metadatas)
     clear(&entity.tags)
@@ -39,11 +39,11 @@ entity_defaultCounter :: proc(entity: ^provision.Entity_Data, counterId: provisi
 }
 
 entity_setCounterMinimum :: proc(entity: ^provision.Entity_Data, counterId: provision.Counter_Id, counterMinimm: i32) {
-    entity.counterMinimums[counterId] = counterMinimm
+    entity.counter_minimums[counterId] = counterMinimm
 }
 
 entity_setCounterMaximum :: proc(entity: ^provision.Entity_Data, counterId: provision.Counter_Id, counterMaximum: i32) {
-    entity.counterMaximums[counterId] = counterMaximum
+    entity.counter_maximums[counterId] = counterMaximum
 }
 
 entity_setTag :: proc(entity: ^provision.Entity_Data, tagId: provision.Tag_Id) {
@@ -92,11 +92,11 @@ entity_defaultDimension :: proc(entity: ^provision.Entity_Data, dimensionId: pro
 }
 
 entity_setDimensionMinimum :: proc(entity: ^provision.Entity_Data, dimensionId: provision.Dimension_Id, dimensionMinimum: f64) {
-    entity.dimensionMinimums[dimensionId] = dimensionMinimum
+    entity.dimension_minimums[dimensionId] = dimensionMinimum
 }
 
 entity_setDimensionMaximum :: proc(entity: ^provision.Entity_Data, dimensionId: provision.Dimension_Id, dimensionMinimum: f64) {
-    entity.dimensionMaximums[dimensionId] = dimensionMinimum
+    entity.dimension_maximums[dimensionId] = dimensionMinimum
 }
 
 entity_assignTag :: proc(entity: ^provision.Entity_Data, tagId: provision.Tag_Id, value: bool) {
@@ -128,7 +128,7 @@ entity_changeCounter :: proc(entity: ^provision.Entity_Data, counterId: provisio
 }
 
 entity_getCounterMinimum :: proc(entity: ^provision.Entity_Data, counterId: provision.Counter_Id) -> i32 {
-    result, ok:= entity.counterMinimums[counterId]
+    result, ok:= entity.counter_minimums[counterId]
     if ok {
         return result
     }
@@ -136,7 +136,7 @@ entity_getCounterMinimum :: proc(entity: ^provision.Entity_Data, counterId: prov
 }
 
 entity_getCounterMaximum :: proc(entity: ^provision.Entity_Data, counterId: provision.Counter_Id) -> i32 {
-    result, ok:= entity.counterMaximums[counterId]
+    result, ok:= entity.counter_maximums[counterId]
     if ok {
         return result
     }
@@ -174,7 +174,7 @@ entity_changeDimension :: proc(entity: ^provision.Entity_Data, dimensionId: prov
 }
 
 entity_getDimensionMinimum :: proc(entity: ^provision.Entity_Data, dimensionId: provision.Dimension_Id) -> f64 {
-    result, ok:= entity.dimensionMinimums[dimensionId]
+    result, ok:= entity.dimension_minimums[dimensionId]
     if ok {
         return result
     }
@@ -182,7 +182,7 @@ entity_getDimensionMinimum :: proc(entity: ^provision.Entity_Data, dimensionId: 
 }
 
 entity_getDimensionMaximum :: proc(entity: ^provision.Entity_Data, dimensionId: provision.Dimension_Id) -> f64 {
-    result, ok:= entity.dimensionMaximums[dimensionId]
+    result, ok:= entity.dimension_maximums[dimensionId]
     if ok {
         return result
     }
