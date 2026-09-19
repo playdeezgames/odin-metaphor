@@ -3,12 +3,15 @@ package metaphor
 import "provision"
 import "persistence"
 import "core:fmt"
-import "core:encoding/uuid"
 import "extension"
 
 COUNTER_SATIETY : provision.COUNTER_ID : "SATIETY"
 
 main :: proc () {
+    for _ in 0..<6 {
+        fmt.println(extension.rng_roll_dice("1d6*2"))
+    }
+
     world: provision.WorldData
     provision.worldData_ctor(&world, persistence.ENTITYTYPES_WORLD)
     defer provision.worldData_dtor(&world)
