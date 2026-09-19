@@ -12,9 +12,9 @@ main :: proc () {
         fmt.println(extension.rng_roll_dice("1d6*2"))
     }
 
-    world: provision.WorldData
-    provision.worldData_ctor(&world, persistence.ENTITYTYPES_WORLD)
-    defer provision.worldData_dtor(&world)
+    world: provision.World_Data
+    provision.world_data_init(&world, persistence.ENTITYTYPES_WORLD)
+    defer provision.world_data_destroy(&world)
     extension.world_initialize(&world)
 
     character, _:= persistence.world_getAvatar(&world)

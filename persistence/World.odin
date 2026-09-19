@@ -5,7 +5,7 @@ import "core:encoding/json"
 import "core:os"
 import "core:encoding/uuid"
 
-world_clear :: proc(world: ^provision.WorldData) {
+world_clear :: proc(world: ^provision.World_Data) {
     entity_clear(world)
     world_clearMessages(world)
     for _, &entity in world.entities {
@@ -14,11 +14,11 @@ world_clear :: proc(world: ^provision.WorldData) {
     clear(&world.entities)
 }
 
-world_getMessages :: proc(world: ^provision.WorldData) -> [dynamic]provision.MessageData {
+world_getMessages :: proc(world: ^provision.World_Data) -> [dynamic]provision.Message_Data {
     return world.messages
 }
 
-world_save :: proc(world: ^provision.WorldData, filename: string) -> bool {
+world_save :: proc(world: ^provision.World_Data, filename: string) -> bool {
     json_data, err := json.marshal(world, allocator = context.temp_allocator)
     if err == nil {
         return os.write_entire_file(filename, json_data) == nil
@@ -26,13 +26,13 @@ world_save :: proc(world: ^provision.WorldData, filename: string) -> bool {
     return false
 }
 
-world_load :: proc(filename: string) -> (result: ^provision.WorldData, ok:bool) {
+world_load :: proc(filename: string) -> (result: ^provision.World_Data, ok:bool) {
     file_data, err := os.read_entire_file(filename, context.temp_allocator)
     if err != nil {
         return nil, false
     }
     defer delete(file_data)
-    result = new(provision.WorldData)
+    result = new(provision.World_Data)
     unmarshal_err := json.unmarshal(file_data, result)
     if unmarshal_err != .None {
         free(result)
@@ -41,26 +41,26 @@ world_load :: proc(filename: string) -> (result: ^provision.WorldData, ok:bool) 
     return result, true
 }
 
-world_clearMessages :: proc(world: ^provision.WorldData) {
+world_clearMessages :: proc(world: ^provision.World_Data) {
     clear(&world.messages)
 }
 
-world_addMessage_full :: proc(world: ^provision.WorldData, text: string, hints: map[string]string) {
+world_addMessage_full :: proc(world: ^provision.World_Data, text: string, hints: map[string]string) {
     append(
         &world.messages, 
-        provision.MessageData{
+        provision.Message_Data{
             text = text,
             hints = hints
         })
 }
 
-world_addMessage_default :: proc(world: ^provision.WorldData, text: string) {
+world_addMessage_default :: proc(world: ^provision.World_Data, text: string) {
     world_addMessage_full(world, text, map[string]string{})
 }
 
 world_addMessage :: proc{world_addMessage_default, world_addMessage_full}
 
-world_createLocation_full :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, initializer: LocationInitializer) -> Location {
+world_createLocation_full :: proc(world: ^provision.World_Data, entitySubtype: string, name:string, initializer: LocationInitializer) -> Location {
     entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
     provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_LOCATION)
@@ -74,13 +74,13 @@ world_createLocation_full :: proc(world: ^provision.WorldData, entitySubtype: st
     return result
 }
 
-world_createLocation_default :: proc(world: ^provision.WorldData, entitySubtype: string, name:string) -> Location {
+world_createLocation_default :: proc(world: ^provision.World_Data, entitySubtype: string, name:string) -> Location {
     return world_createLocation_full(world, entitySubtype, name, nil)
 }
 
 world_createLocation :: proc{world_createLocation_default, world_createLocation_full}
 
-world_getLocation :: proc(world: ^provision.WorldData, locationId: LOCATION_ID) -> (result: Location, ok: bool) {
+world_getLocation :: proc(world: ^provision.World_Data, locationId: LOCATION_ID) -> (result: Location, ok: bool) {
     if provision.Entity_Id(locationId) not_in world.entities {
         return {}, false
     }
@@ -92,7 +92,7 @@ world_getLocation :: proc(world: ^provision.WorldData, locationId: LOCATION_ID) 
     return result, true
 }
 
-world_getInventory :: proc(world: ^provision.WorldData, inventoryId: INVENTORY_ID) -> (result: Inventory, ok: bool) {
+world_getInventory :: proc(world: ^provision.World_Data, inventoryId: INVENTORY_ID) -> (result: Inventory, ok: bool) {
     if provision.Entity_Id(inventoryId) not_in world.entities {
         return {}, false
     }
@@ -104,7 +104,7 @@ world_getInventory :: proc(world: ^provision.WorldData, inventoryId: INVENTORY_I
     return result, true
 }
 
-world_getVerb :: proc(world: ^provision.WorldData, verbId: VERB_ID) -> (result: Verb, ok: bool) {
+world_getVerb :: proc(world: ^provision.World_Data, verbId: VERB_ID) -> (result: Verb, ok: bool) {
     if provision.Entity_Id(verbId) not_in world.entities {
         return {}, false
     }
@@ -116,7 +116,7 @@ world_getVerb :: proc(world: ^provision.WorldData, verbId: VERB_ID) -> (result: 
     return result, true
 }
 
-world_getFeature :: proc(world: ^provision.WorldData, featureId: FEATURE_ID) -> (result: Feature, ok: bool) {
+world_getFeature :: proc(world: ^provision.World_Data, featureId: FEATURE_ID) -> (result: Feature, ok: bool) {
     if provision.Entity_Id(featureId) not_in world.entities {
         return {}, false
     }
@@ -128,7 +128,7 @@ world_getFeature :: proc(world: ^provision.WorldData, featureId: FEATURE_ID) -> 
     return result, true
 }
 
-world_getMap :: proc(world: ^provision.WorldData, mapId: MAP_ID) -> (result: Map, ok: bool) {
+world_getMap :: proc(world: ^provision.World_Data, mapId: MAP_ID) -> (result: Map, ok: bool) {
     if provision.Entity_Id(mapId) not_in world.entities {
         return {}, false
     }
@@ -140,7 +140,7 @@ world_getMap :: proc(world: ^provision.WorldData, mapId: MAP_ID) -> (result: Map
     return result, true
 }
 
-world_getCharacter :: proc(world: ^provision.WorldData, characterId: CHARACTER_ID) -> (result: Character, ok: bool) {
+world_getCharacter :: proc(world: ^provision.World_Data, characterId: CHARACTER_ID) -> (result: Character, ok: bool) {
     if provision.Entity_Id(characterId) not_in world.entities {
         return {}, false
     }
@@ -152,7 +152,7 @@ world_getCharacter :: proc(world: ^provision.WorldData, characterId: CHARACTER_I
     return result, true
 }
 
-world_getAvatar :: proc(world: ^provision.WorldData) -> (result: Character, ok: bool) {
+world_getAvatar :: proc(world: ^provision.World_Data) -> (result: Character, ok: bool) {
     entityId: provision.Entity_Id
     entityId, ok = entity_getYoke(world, YOKES_AVATAR)
     if !ok {
@@ -161,15 +161,15 @@ world_getAvatar :: proc(world: ^provision.WorldData) -> (result: Character, ok: 
     return world_getCharacter(world, CHARACTER_ID(entityId))
 }
 
-world_setAvatar :: proc(world: ^provision.WorldData, characterId: CHARACTER_ID) {
+world_setAvatar :: proc(world: ^provision.World_Data, characterId: CHARACTER_ID) {
     entity_setYoke(world, YOKES_AVATAR, provision.Entity_Id(characterId))
 }
 
-world_clearAvatar :: proc(world: ^provision.WorldData) {
+world_clearAvatar :: proc(world: ^provision.World_Data) {
     entity_clearYoke(world, YOKES_AVATAR)
 }
 
-world_createMap :: proc(world: ^provision.WorldData, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
+world_createMap :: proc(world: ^provision.World_Data, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
     entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
     provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_MAP)
@@ -185,7 +185,7 @@ world_createMap :: proc(world: ^provision.WorldData, entitySubtype: string, name
     return result
 }
 
-world_getItem :: proc(world: ^provision.WorldData, itemId: ITEM_ID) -> (result: Item, ok: bool) {
+world_getItem :: proc(world: ^provision.World_Data, itemId: ITEM_ID) -> (result: Item, ok: bool) {
     if provision.Entity_Id(itemId) not_in world.entities {
         return {}, false
     }

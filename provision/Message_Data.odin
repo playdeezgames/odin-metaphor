@@ -1,14 +1,14 @@
 package provision
 
-MessageData :: struct {
+Message_Data :: struct {
     text: string,
     hints: map[string]string
 }
 
-messageData_ctor :: proc(data: ^MessageData) {
+message_data_init :: proc(data: ^Message_Data) {
     data.hints = make(map[string]string)
 }
 
-messageData_dtor :: proc(data: ^MessageData) {
+message_data_destroy :: proc(data: ^Message_Data) {
     delete(data.hints)
 }

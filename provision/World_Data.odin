@@ -1,27 +1,25 @@
 package provision
 
-import "core:encoding/uuid"
-
-WorldData :: struct {
+World_Data :: struct {
     using entity: Entity_Data,
     entities: map[Entity_Id]Entity_Data,
-    messages: [dynamic]MessageData
+    messages: [dynamic]Message_Data
 }
 
-worldData_ctor :: proc(data: ^WorldData, entity_type: string) {
+world_data_init :: proc(data: ^World_Data, entity_type: string) {
     entity_data_init(&data.entity, entity_type)
     data.entities = make(map[Entity_Id]Entity_Data)
-    data.messages = make([dynamic]MessageData)
+    data.messages = make([dynamic]Message_Data)
 }
 
-worldData_dtor :: proc(data: ^WorldData) {
+world_data_destroy :: proc(data: ^World_Data) {
     entity_data_destroy(&data.entity)
     for _, &entity in data.entities {
         entity_data_destroy(&entity)
     }
     delete(data.entities)
     for &message in data.messages {
-        messageData_dtor(&message)
+        message_data_destroy(&message)
     }
     delete(data.messages)
 }

@@ -5,14 +5,14 @@ import "../provision"
 import "core:encoding/uuid"
 
 MetaphorEntity :: struct($T: typeid) {
-    worldData: ^provision.WorldData,
+    worldData: ^provision.World_Data,
     entityId: T,
     entityData: ^provision.Entity_Data
 }
 
 metaphorEntity_ctor :: proc(
     entity: ^MetaphorEntity($T), 
-    worldData: ^provision.WorldData, 
+    worldData: ^provision.World_Data, 
     entityId: T, 
     entityData: ^provision.Entity_Data) {
         entity.worldData = worldData

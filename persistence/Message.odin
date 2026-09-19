@@ -2,11 +2,11 @@ package persistence
 
 import "../provision"
 
-message_getText :: proc(message: ^provision.MessageData) -> string {
+message_getText :: proc(message: ^provision.Message_Data) -> string {
     return message.text
 }
 
-message_getHintNames :: proc(message: ^provision.MessageData) -> [dynamic]string {
+message_getHintNames :: proc(message: ^provision.Message_Data) -> [dynamic]string {
     hints := message.hints
     result:= make([dynamic]string, 0, len(hints))
     for name in hints {
@@ -14,11 +14,11 @@ message_getHintNames :: proc(message: ^provision.MessageData) -> [dynamic]string
     }
     return result
 }
-message_hasHint :: proc(message: ^provision.MessageData, hintName: string) -> bool {
+message_hasHint :: proc(message: ^provision.Message_Data, hintName: string) -> bool {
     return hintName in message.hints
 }
 
-message_getHint :: proc(message: ^provision.MessageData, hintName: string) -> (result:string, ok: bool) {
+message_getHint :: proc(message: ^provision.Message_Data, hintName: string) -> (result:string, ok: bool) {
     hints := message.hints
     if hintName in hints {
         return hints[hintName], true
