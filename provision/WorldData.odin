@@ -3,14 +3,14 @@ package provision
 import "core:encoding/uuid"
 
 WorldData :: struct {
-    using entity: EntityData,
-    entities: map[ENTITY_ID]EntityData,
+    using entity: Entity_Data,
+    entities: map[ENTITY_ID]Entity_Data,
     messages: [dynamic]MessageData
 }
 
 worldData_ctor :: proc(data: ^WorldData, entityType: string) {
     entityData_ctor(&data.entity, entityType)
-    data.entities = make(map[ENTITY_ID]EntityData)
+    data.entities = make(map[ENTITY_ID]Entity_Data)
     data.messages = make([dynamic]MessageData)
 }
 

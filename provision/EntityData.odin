@@ -13,7 +13,7 @@ TAG_ID :: distinct string
 YOKE_ID :: distinct string
 YOKAGE_ID :: distinct string
 
-EntityData :: struct {
+Entity_Data :: struct {
     entityType: string,
     metadatas: map[METADATA_ID]string,
     counters: map[COUNTER_ID]i32,
@@ -27,7 +27,7 @@ EntityData :: struct {
     yokages: map[YOKAGE_ID]ENTITY_ID_SET
 }
 
-entityData_ctor :: proc(data: ^EntityData, entityType: string) {
+entityData_ctor :: proc(data: ^Entity_Data, entityType: string) {
     data.entityType = entityType
     data.metadatas = make(map[METADATA_ID]string)
     data.counters = make(map[COUNTER_ID]i32)
@@ -41,7 +41,7 @@ entityData_ctor :: proc(data: ^EntityData, entityType: string) {
     data.yokages = make(map[YOKAGE_ID]ENTITY_ID_SET)
 }
 
-entityData_dtor :: proc(data: ^EntityData) {
+entityData_dtor :: proc(data: ^Entity_Data) {
     data.entityType = ""
     delete(data.metadatas)
     delete(data.counters)

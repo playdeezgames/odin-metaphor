@@ -5,7 +5,7 @@ import "../provision"
 
 @(test)
 test_raw_EntityData_values :: proc(t: ^testing.T) {
-    sut: provision.EntityData
+    sut: provision.Entity_Data
     testing.expect(t, sut.entityType == "")
     testing.expect(t, len(sut.metadatas) == 0)
     testing.expect(t, len(sut.counters) == 0)
@@ -22,7 +22,7 @@ test_raw_EntityData_values :: proc(t: ^testing.T) {
 @(test)
 test_entityData_ctor_dtor :: proc(t: ^testing.T) {
     ENTITY_TYPE :: "ENTITY_TYPE"
-    sut: provision.EntityData
+    sut: provision.Entity_Data
     provision.entityData_ctor(&sut, ENTITY_TYPE)
     testing.expect(t, sut.entityType == ENTITY_TYPE)
     testing.expect(t, len(sut.metadatas) == 0)

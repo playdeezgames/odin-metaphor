@@ -6,7 +6,7 @@ import "../persistence"
 
 @(test)
 test_entity_getMetadata :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -18,7 +18,7 @@ test_entity_getMetadata :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_hasMetadata :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -30,7 +30,7 @@ test_entity_hasMetadata :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_setMetadata :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -47,7 +47,7 @@ test_entity_setMetadata :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_getCounter :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -59,7 +59,7 @@ test_entity_getCounter :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_hasCounter :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -70,7 +70,7 @@ test_entity_hasCounter :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_setCounter :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -85,7 +85,7 @@ test_entity_setCounter :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_getCounterMaximum :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -96,7 +96,7 @@ test_entity_getCounterMaximum :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_setCounterMaximum :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -110,7 +110,7 @@ test_entity_setCounterMaximum :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_getCounterMinimum :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -121,7 +121,7 @@ test_entity_getCounterMinimum :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_setCounterMinimum :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -136,7 +136,7 @@ test_entity_setCounterMinimum :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_hasTag :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -149,7 +149,7 @@ test_entity_hasTag :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_hasTags :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -163,7 +163,7 @@ test_entity_hasTags :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_hasDimension :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -176,7 +176,7 @@ test_entity_hasDimension :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_getDimension :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -190,7 +190,7 @@ test_entity_getDimension :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_setDimension :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -209,7 +209,7 @@ test_entity_setDimension :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_changeDimension_fail :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
@@ -228,7 +228,7 @@ test_entity_changeDimension_fail :: proc(t: ^testing.T) {
 
 @(test)
 test_entity_changeDimension_succeed :: proc(t: ^testing.T) {
-    sut : provision.EntityData
+    sut : provision.Entity_Data
     provision.entityData_ctor(&sut, persistence.ENTITYTYPES_CHARACTER)
     defer provision.entityData_dtor(&sut)
 
