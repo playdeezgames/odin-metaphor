@@ -125,7 +125,7 @@ metaphorEntity_getInventory :: proc(entity: ^MetaphorEntity($T)) -> Inventory {
     if !ok {
         inventoryId= provision.ENTITY_ID(uuid.generate_v4())
         entity.worldData.entities[inventoryId] = {}
-        provision.entityData_ctor(&entity.worldData.entities[inventoryId], ENTITYTYPES_INVENTORY)
+        provision.entity_data_ctor(&entity.worldData.entities[inventoryId], ENTITYTYPES_INVENTORY)
     }
     result, _:= world_getInventory(entity.worldData, INVENTORY_ID(inventoryId))
     return result
@@ -145,7 +145,7 @@ metaphorEntity_getVerbs :: proc(entity: ^MetaphorEntity($T)) -> [dynamic]Verb {
 metaphorEntity_createVerb_full :: proc(entity: ^MetaphorEntity($T), entitySubtype: string, name:string, initializer: VerbInitializer) -> Verb {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
-    provision.entityData_ctor(&entity.worldData.entities[entityId],ENTITYTYPES_VERB)
+    provision.entity_data_ctor(&entity.worldData.entities[entityId],ENTITYTYPES_VERB)
     result, _ := world_getVerb(entity.worldData, VERB_ID(entityId))
     entity_addToYokage(entity.entityData, YOKAGES_VERBS, entityId)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)

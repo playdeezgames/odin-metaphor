@@ -77,7 +77,7 @@ location_remove :: proc(entity: ^Location) {
 location_createCharacter :: proc(entity: ^Location, entitySubtype: string, name: string, initialize: CharacterInitializer) -> Character {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
-    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_CHARACTER)
+    provision.entity_data_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_CHARACTER)
     result, _ := world_getCharacter(entity.worldData, CHARACTER_ID(entityId))
     entity_setYoke(result.entityData, YOKES_LOCATION, provision.ENTITY_ID(entity.entityId))
     entity_addToYokage(entity.entityData, YOKAGES_CHARACTERS, entityId)
@@ -92,7 +92,7 @@ location_createCharacter :: proc(entity: ^Location, entitySubtype: string, name:
 location_createFeature :: proc(entity: ^Location, entitySubtype: string, name: string, initialize: FeatureInitializer) -> Feature {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
-    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_FEATURE)
+    provision.entity_data_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_FEATURE)
     result, _ := world_getFeature(entity.worldData, FEATURE_ID(entityId))
     entity_setYoke(result.entityData, YOKES_LOCATION, provision.ENTITY_ID(entity.entityId))
     entity_addToYokage(entity.entityData, YOKAGES_FEATURES, entityId)

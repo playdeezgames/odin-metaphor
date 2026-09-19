@@ -9,7 +9,7 @@ WorldData :: struct {
 }
 
 worldData_ctor :: proc(data: ^WorldData, entityType: string) {
-    entityData_ctor(&data.entity, entityType)
+    entity_data_ctor(&data.entity, entityType)
     data.entities = make(map[ENTITY_ID]Entity_Data)
     data.messages = make([dynamic]MessageData)
 }

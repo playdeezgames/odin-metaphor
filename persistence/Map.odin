@@ -45,7 +45,7 @@ map_remove :: proc(entity: ^Map) {
 map_createLocation :: proc(entity: ^Map, entitySubtype: string, name:string, column: i32, row: i32, initializer: LocationInitializer) -> Location {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
-    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_LOCATION)
+    provision.entity_data_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_LOCATION)
     result, _ := world_getLocation(entity.worldData, LOCATION_ID(entityId))
     entity_setCounter(result.entityData, COUNTERS_COLUMN, column)
     entity_setCounter(result.entityData, COUNTERS_ROW, row)

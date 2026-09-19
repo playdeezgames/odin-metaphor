@@ -38,7 +38,7 @@ inventory_remove :: proc(entity: ^Inventory) {
 inventory_createItem :: proc(entity: ^Inventory, entitySubtype: string, name: string, initialize: ItemInitializer) -> Item {
     entityId:= provision.ENTITY_ID(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
-    provision.entityData_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_ITEM)
+    provision.entity_data_ctor(&entity.worldData.entities[entityId], ENTITYTYPES_ITEM)
     result, _ := world_getItem(entity.worldData, ITEM_ID(entityId))
     item_setContainer(&result, entity)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)
