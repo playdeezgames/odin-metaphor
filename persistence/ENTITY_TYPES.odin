@@ -1,0 +1,10 @@
+package persistence
+
+ENTITY_TYPES_CHARACTER : string : "CHARACTER"
+ENTITY_TYPES_FEATURE   : string : "FEATURE"
+ENTITY_TYPES_INVENTORY : string : "INVENTORY"
+ENTITY_TYPES_ITEM      : string : "ITEM"
+ENTITY_TYPES_LOCATION  : string : "LOCATION"
+ENTITY_TYPES_MAP       : string : "MAP"
+ENTITY_TYPES_VERB      : string : "VERB"
+ENTITY_TYPES_WORLD     : string : "WORLD"

@@ -7,7 +7,7 @@ import "../persistence"
 @(test)
 test_entity_getMetadata :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual, ok := persistence.entity_getMetadata(&sut, persistence.METADATAS_SUBTYPE)
@@ -19,7 +19,7 @@ test_entity_getMetadata :: proc(t: ^testing.T) {
 @(test)
 test_entity_hasMetadata :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual:= persistence.entity_hasMetadata(&sut, persistence.METADATAS_SUBTYPE)
@@ -31,7 +31,7 @@ test_entity_hasMetadata :: proc(t: ^testing.T) {
 @(test)
 test_entity_setMetadata :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     METADATA_VALUE :: "METADATA_VALUE"
@@ -48,7 +48,7 @@ test_entity_setMetadata :: proc(t: ^testing.T) {
 @(test)
 test_entity_getCounter :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual, ok := persistence.entity_getCounter(&sut, persistence.COUNTERS_COLUMN)
@@ -60,7 +60,7 @@ test_entity_getCounter :: proc(t: ^testing.T) {
 @(test)
 test_entity_hasCounter :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual:= persistence.entity_hasCounter(&sut, persistence.COUNTERS_COLUMN)
@@ -71,7 +71,7 @@ test_entity_hasCounter :: proc(t: ^testing.T) {
 @(test)
 test_entity_setCounter :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     COUNTER_VALUE : i32 : 10
@@ -86,7 +86,7 @@ test_entity_setCounter :: proc(t: ^testing.T) {
 @(test)
 test_entity_getCounterMaximum :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual := persistence.entity_getCounterMaximum(&sut, persistence.COUNTERS_COLUMN)
@@ -97,7 +97,7 @@ test_entity_getCounterMaximum :: proc(t: ^testing.T) {
 @(test)
 test_entity_setCounterMaximum :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     COUNTER_MAXIMUM : i32 : 100
@@ -111,7 +111,7 @@ test_entity_setCounterMaximum :: proc(t: ^testing.T) {
 @(test)
 test_entity_getCounterMinimum :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     actual := persistence.entity_getCounterMinimum(&sut, persistence.COUNTERS_COLUMN)
@@ -122,7 +122,7 @@ test_entity_getCounterMinimum :: proc(t: ^testing.T) {
 @(test)
 test_entity_setCounterMinimum :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     COUNTER_MINIMUM : i32 : -100
@@ -137,7 +137,7 @@ test_entity_setCounterMinimum :: proc(t: ^testing.T) {
 @(test)
 test_entity_hasTag :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     TAG_NAME : provision.Tag_Id : "TAG_NAME"
@@ -150,7 +150,7 @@ test_entity_hasTag :: proc(t: ^testing.T) {
 @(test)
 test_entity_hasTags :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     FIRST_TAG : provision.Tag_Id : "FIRST_TAG"
@@ -164,7 +164,7 @@ test_entity_hasTags :: proc(t: ^testing.T) {
 @(test)
 test_entity_hasDimension :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
@@ -177,7 +177,7 @@ test_entity_hasDimension :: proc(t: ^testing.T) {
 @(test)
 test_entity_getDimension :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
@@ -191,7 +191,7 @@ test_entity_getDimension :: proc(t: ^testing.T) {
 @(test)
 test_entity_setDimension :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
@@ -210,7 +210,7 @@ test_entity_setDimension :: proc(t: ^testing.T) {
 @(test)
 test_entity_changeDimension_fail :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
@@ -229,7 +229,7 @@ test_entity_changeDimension_fail :: proc(t: ^testing.T) {
 @(test)
 test_entity_changeDimension_succeed :: proc(t: ^testing.T) {
     sut : provision.Entity_Data
-    provision.entity_data_init(&sut, persistence.ENTITYTYPES_CHARACTER)
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
     defer provision.entity_data_destroy(&sut)
 
     DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"

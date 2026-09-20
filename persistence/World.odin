@@ -63,7 +63,7 @@ world_addMessage :: proc{world_addMessage_default, world_addMessage_full}
 world_createLocation_full :: proc(world: ^provision.World_Data, entitySubtype: string, name:string, initializer: LocationInitializer) -> Location {
     entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
-    provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_LOCATION)
+    provision.entity_data_init(&world.entities[entityId], ENTITY_TYPES_LOCATION)
     result, _ := world_getLocation(world, LOCATION_ID(entityId))
     entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)
@@ -172,7 +172,7 @@ world_clearAvatar :: proc(world: ^provision.World_Data) {
 world_createMap :: proc(world: ^provision.World_Data, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
     entityId:= provision.Entity_Id(uuid.generate_v4())
     world.entities[entityId] = {}
-    provision.entity_data_init(&world.entities[entityId], ENTITYTYPES_MAP)
+    provision.entity_data_init(&world.entities[entityId], ENTITY_TYPES_MAP)
     result, _ := world_getMap(world, MAP_ID(entityId))
     entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     entity_setMetadata(result.entityData, METADATAS_NAME, name)

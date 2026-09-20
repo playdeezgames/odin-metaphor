@@ -13,7 +13,7 @@ main :: proc () {
     }
 
     world: provision.World_Data
-    provision.world_data_init(&world, persistence.ENTITYTYPES_WORLD)
+    provision.world_data_init(&world, persistence.ENTITY_TYPES_WORLD)
     defer provision.world_data_destroy(&world)
     extension.world_initialize(&world)
 
