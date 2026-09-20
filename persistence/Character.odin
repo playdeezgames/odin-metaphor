@@ -4,7 +4,7 @@ import "../provision"
 
 CHARACTER_ID :: distinct provision.Entity_Id
 
-Character :: distinct MetaphorEntity(CHARACTER_ID)
+Character :: distinct Metaphor_Entity(CHARACTER_ID)
 
 CharacterInitializer :: distinct proc(^Character)
 
@@ -46,10 +46,10 @@ character_remove :: proc(entity: ^Character) {
     if entity == nil || entity.entityData == nil {
         return
     }
-    inventory:= metaphorEntity_getInventory(entity)
+    inventory:= metaphor_entity_get_inventory(entity)
     inventory_remove(&inventory)
     character_setLocation(entity, nil)
-    metaphorEntity_remove(entity)
+    metaphor_entity_remove(entity)
     if entityData, ok:= entity.worldData.entities[provision.Entity_Id(entity.entityId)]; ok {
         provision.entity_data_destroy(&entityData)
         delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))

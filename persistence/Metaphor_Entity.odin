@@ -4,14 +4,14 @@ import "core:fmt"
 import "../provision"
 import "core:encoding/uuid"
 
-MetaphorEntity :: struct($T: typeid) {
+Metaphor_Entity :: struct($T: typeid) {
     worldData: ^provision.World_Data,
     entityId: T,
     entityData: ^provision.Entity_Data
 }
 
-metaphorEntity_ctor :: proc(
-    entity: ^MetaphorEntity($T), 
+metaphor_entity_initialize :: proc(
+    entity: ^Metaphor_Entity($T), 
     worldData: ^provision.World_Data, 
     entityId: T, 
     entityData: ^provision.Entity_Data) {
@@ -20,53 +20,48 @@ metaphorEntity_ctor :: proc(
         entity.entityData = entityData
 }
 
-metaphorEntity_getName :: proc(entity: ^MetaphorEntity($T)) -> (result: string, ok: bool) {
+metaphor_entity_get_name :: proc(entity: ^Metaphor_Entity($T)) -> (result: string, ok: bool) {
     return entity_getMetadata(entity.entityData, METADATAS_NAME)
 }
 
-metaphorEntity_getEntityId :: proc(entity: ^MetaphorEntity($T)) -> T {
+metaphor_entity_get_entity_id :: proc(entity: ^Metaphor_Entity($T)) -> T {
     return entity.entityId
 }
 
-metaphorEntity_getEntitySubtype :: proc(entity: ^MetaphorEntity($T)) -> (result: string, ok: bool) {
+metaphor_entity_get_entity_subtype :: proc(entity: ^Metaphor_Entity($T)) -> (result: string, ok: bool) {
     return entity_getMetadata(entity.entityData, METADATAS_SUBTYPE)
 }
 
-metaphorEntity_exists :: proc(entity: ^MetaphorEntity($T)) -> bool {
+metaphor_entity_exists :: proc(entity: ^Metaphor_Entity($T)) -> bool {
     return provision.Entity_Id(entity.entityId) in entity.worldData.entities
 }
 
-//     Public Sub AddMessage(
-//                          text As String,
-//                          Optional hints As IDictionary(Of String, String) = Nothing,
-//                          Optional silent As Boolean = False) Implements IMetaphorEntity.AddMessage
-//         If Not silent Then
-//             World.AddMessage(text, hints)
-//         End If
-//     End Sub
-metaphorEntity_addMessage_full :: proc(entity: ^MetaphorEntity($T), text: string, hints: map[string]string, silent: bool) {
+@(private)
+metaphor_entity_add_message_full :: proc(entity: ^Metaphor_Entity($T), text: string, hints: map[string]string, silent: bool) {
     if !silent {
         world_addMessage(entity.worldData, text, hints)
     }
 }
 
-metaphorEntity_addMessage_default1 :: proc(entity: ^MetaphorEntity($T), text: string, hints: map[string]string) {
-    metaphorEntity_addMessage_full(entity, text, hints, false)
+@(private)
+metaphor_entity_add_message_default_1 :: proc(entity: ^Metaphor_Entity($T), text: string, hints: map[string]string) {
+    metaphor_entity_add_message_full(entity, text, hints, false)
 }
 
-metaphorEntity_addMessage_default2 :: proc(entity: ^MetaphorEntity($T), text: string) {
-    metaphorEntity_addMessage_full(entity, text, map[string]string{}, false)
+@(private)
+metaphor_entity_add_message_default_2 :: proc(entity: ^Metaphor_Entity($T), text: string) {
+    metaphor_entity_add_message_full(entity, text, map[string]string{}, false)
 }
 
-metaphorEntity_addMessage :: proc{metaphorEntity_addMessage_default2, metaphorEntity_addMessage_default1, metaphorEntity_addMessage_full}
+metaphor_entity_add_message :: proc{metaphor_entity_add_message_default_2, metaphor_entity_add_message_default_1, metaphor_entity_add_message_full}
 
-metaphorEntity_initializeCounter :: proc(entity: ^MetaphorEntity($T), counterId: provision.Counter_Id, value: i32, minimum: i32, maximum: i32) {
+metaphor_entity_initialize_counter :: proc(entity: ^Metaphor_Entity($T), counterId: provision.Counter_Id, value: i32, minimum: i32, maximum: i32) {
     entity_setCounterMaximum(entity.entityData, counterId, maximum)
     entity_setCounterMinimum(entity.entityData, counterId, minimum)
     entity_setCounter(entity.entityData, counterId, value)
 }
 
-metaphorEntity_getCounterPercentage :: proc(entity: ^MetaphorEntity($T), counterId: provision.Counter_Id) -> (result: string, ok: bool) {
+metaphor_entity_get_counter_percentage :: proc(entity: ^Metaphor_Entity($T), counterId: provision.Counter_Id) -> (result: string, ok: bool) {
     value : i32
     value, ok = entity_getCounter(entity.entityData, counterId)
     if ok {
@@ -78,13 +73,13 @@ metaphorEntity_getCounterPercentage :: proc(entity: ^MetaphorEntity($T), counter
     return result, ok
 }
 
-metaphorEntity_initializeDimension :: proc(entity: ^MetaphorEntity($T), dimensionId: provision.Dimension_Id, value: f64, minimum: f64, maximum: f64) {
+metaphor_entity_initialize_dimension :: proc(entity: ^Metaphor_Entity($T), dimensionId: provision.Dimension_Id, value: f64, minimum: f64, maximum: f64) {
     entity_setDimensionMaximum(entity.entityData, dimensionId, maximum)
     entity_setDimensionMinimum(entity.entityData, dimensionId, minimum)
     entity_setDimension(entity.entityData, dimensionId, value)
 }
 
-metaphorEntity_getCounterStatistic :: proc(entity: ^MetaphorEntity($T), counterId: provision.Counter_Id) -> (result: string, ok: bool) {
+metaphor_entity_get_counter_statistic :: proc(entity: ^Metaphor_Entity($T), counterId: provision.Counter_Id) -> (result: string, ok: bool) {
     value : i32
     value, ok = entity_getCounter(entity.entityData, counterId)
     if ok {
@@ -95,7 +90,7 @@ metaphorEntity_getCounterStatistic :: proc(entity: ^MetaphorEntity($T), counterI
     return result, ok
 }
 
-metaphorEntity_getDimensionStatistic :: proc(entity: ^MetaphorEntity($T), dimensionId: provision.Dimension_Id) -> (result: string, ok: bool) {
+metaphor_entity_get_dimension_statistic :: proc(entity: ^Metaphor_Entity($T), dimensionId: provision.Dimension_Id) -> (result: string, ok: bool) {
     value: f64
     value, ok= entity_getDimension(entity.entityData, dimensionId)
     if ok {
@@ -106,21 +101,21 @@ metaphorEntity_getDimensionStatistic :: proc(entity: ^MetaphorEntity($T), dimens
     return result, ok
 }
 
-metaphorEntity_getCounterCapacity :: proc(entity: ^MetaphorEntity($T), counterId: provision.Counter_Id) -> (result: i32, ok: bool) {
+metaphor_entity_get_counter_capacity :: proc(entity: ^Metaphor_Entity($T), counterId: provision.Counter_Id) -> (result: i32, ok: bool) {
     if result, ok = entity_getCounter(entity.entityData, counterId); ok {
         result = entity_getCounterMaximum(entity.entityData, counterId) - result
     }
     return result, ok
 }
 
-metaphorEntity_getDimensionCapacity :: proc(entity: ^MetaphorEntity($T), dimensionId: provision.Dimension_Id) -> (result: i32, ok: bool) {
+metaphor_entity_get_dimension_capacity :: proc(entity: ^Metaphor_Entity($T), dimensionId: provision.Dimension_Id) -> (result: i32, ok: bool) {
     if result, ok = entity_getDimension(entity.entityData, dimensionId); ok {
         result = entity_getDimensionMaximum(entity.entityData, dimensionId) - result
     }
     return result, ok
 }
 
-metaphorEntity_getInventory :: proc(entity: ^MetaphorEntity($T)) -> Inventory {
+metaphor_entity_get_inventory :: proc(entity: ^Metaphor_Entity($T)) -> Inventory {
     inventoryId, ok:= entity_getYoke(entity.entityData, YOKES_INVENTORY)
     if !ok {
         inventoryId= provision.Entity_Id(uuid.generate_v4())
@@ -131,7 +126,7 @@ metaphorEntity_getInventory :: proc(entity: ^MetaphorEntity($T)) -> Inventory {
     return result
 }
 
-metaphorEntity_getVerbs :: proc(entity: ^MetaphorEntity($T)) -> [dynamic]Verb {
+metaphor_entity_get_verbs :: proc(entity: ^Metaphor_Entity($T)) -> [dynamic]Verb {
     yokage:= entity_getYokage(entity.entityData, YOKAGES_VERBS)
     result:= make([dynamic]Verb, 0, len(yokage))
     for verbId, _ in yokage {
@@ -142,7 +137,8 @@ metaphorEntity_getVerbs :: proc(entity: ^MetaphorEntity($T)) -> [dynamic]Verb {
     return result
 }
 
-metaphorEntity_createVerb_full :: proc(entity: ^MetaphorEntity($T), entitySubtype: string, name:string, initializer: VerbInitializer) -> Verb {
+@(private)
+metaphor_entity_create_verb_full :: proc(entity: ^Metaphor_Entity($T), entitySubtype: string, name:string, initializer: VerbInitializer) -> Verb {
     entityId:= provision.Entity_Id(uuid.generate_v4())
     entity.worldData.entities[entityId] = {}
     provision.entity_data_init(&entity.worldData.entities[entityId],ENTITY_TYPES_VERB)
@@ -156,13 +152,14 @@ metaphorEntity_createVerb_full :: proc(entity: ^MetaphorEntity($T), entitySubtyp
     return result
 }
 
-metaphorEntity_createVerb_default :: proc(entity: ^MetaphorEntity($T), entitySubtype: string, name:string) -> Verb {
-    return metaphorEntity_createVerb_full(entity, entitySubtype, name, nil)
+@(private)
+metaphor_entity_create_verb_default :: proc(entity: ^Metaphor_Entity($T), entitySubtype: string, name:string) -> Verb {
+    return metaphor_entity_create_verb_full(entity, entitySubtype, name, nil)
 }
 
-metaphorEntity_createVerb :: proc{metaphorEntity_createVerb_default, metaphorEntity_createVerb_full}
+metaphor_entity_create_verb :: proc{metaphor_entity_create_verb_default, metaphor_entity_create_verb_full}
 
-metaphorEntity_remove :: proc(entity: ^MetaphorEntity($T)) {
+metaphor_entity_remove :: proc(entity: ^Metaphor_Entity($T)) {
     if entityData, ok:= entity.worldData.entities[provision.Entity_Id(entity.entityId)]; ok {
         provision.entity_data_destroy(&entityData)
         delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))

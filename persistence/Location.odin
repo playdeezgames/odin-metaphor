@@ -5,7 +5,7 @@ import "core:encoding/uuid"
 
 LOCATION_ID :: distinct provision.Entity_Id
 
-Location :: distinct MetaphorEntity(LOCATION_ID)
+Location :: distinct Metaphor_Entity(LOCATION_ID)
 
 LocationInitializer :: distinct proc(^Location)
 

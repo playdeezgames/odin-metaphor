@@ -5,7 +5,7 @@ import "core:encoding/uuid"
 
 MAP_ID :: distinct provision.Entity_Id
 
-Map :: distinct MetaphorEntity(MAP_ID)
+Map :: distinct Metaphor_Entity(MAP_ID)
 
 MapInitializer :: distinct proc(^Map)
 
@@ -39,7 +39,7 @@ map_remove :: proc(entity: ^Map) {
             location_remove(&location)
         }
     }
-    metaphorEntity_remove(entity)
+    metaphor_entity_remove(entity)
 }
 
 map_createLocation :: proc(entity: ^Map, entitySubtype: string, name:string, column: i32, row: i32, initializer: LocationInitializer) -> Location {

@@ -4,7 +4,7 @@ import "../provision"
 
 FEATURE_ID :: distinct provision.Entity_Id
 
-Feature :: distinct MetaphorEntity(FEATURE_ID)
+Feature :: distinct Metaphor_Entity(FEATURE_ID)
 
 FeatureInitializer :: distinct proc(^Feature)
 
@@ -52,7 +52,7 @@ feature_remove :: proc(entity: ^Feature) {
     if location, ok:= feature_getLocation(entity); ok {
         entity_removeFromYokage(location.entityData, YOKAGES_FEATURES, provision.Entity_Id(entity.entityId))
     }
-    verbs:= metaphorEntity_getVerbs(entity)
+    verbs:= metaphor_entity_get_verbs(entity)
     defer delete(verbs)
     for &verb in verbs {
         verb_remove(&verb)

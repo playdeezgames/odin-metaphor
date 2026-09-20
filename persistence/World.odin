@@ -45,6 +45,7 @@ world_clearMessages :: proc(world: ^provision.World_Data) {
     clear(&world.messages)
 }
 
+@(private)
 world_addMessage_full :: proc(world: ^provision.World_Data, text: string, hints: map[string]string) {
     append(
         &world.messages, 
@@ -54,6 +55,7 @@ world_addMessage_full :: proc(world: ^provision.World_Data, text: string, hints:
         })
 }
 
+@(private)
 world_addMessage_default :: proc(world: ^provision.World_Data, text: string) {
     world_addMessage_full(world, text, map[string]string{})
 }

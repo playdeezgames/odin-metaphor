@@ -5,7 +5,7 @@ import "core:encoding/uuid"
 
 INVENTORY_ID :: distinct provision.Entity_Id
 
-Inventory :: distinct MetaphorEntity(INVENTORY_ID)
+Inventory :: distinct Metaphor_Entity(INVENTORY_ID)
 
 InventoryInitializer :: distinct proc(^Inventory)
 
@@ -32,7 +32,7 @@ inventory_remove :: proc(entity: ^Inventory) {
     for &item in inventory_getItems(entity) {
         item_remove(&item)
     }
-    metaphorEntity_remove(entity)
+    metaphor_entity_remove(entity)
 }
 
 inventory_createItem :: proc(entity: ^Inventory, entitySubtype: string, name: string, initialize: ItemInitializer) -> Item {
@@ -53,7 +53,7 @@ inventory_hasItemOfSubtype :: proc(entity: ^Inventory, entitySubtype: string) ->
     items:= inventory_getItems(entity)
     defer delete(items)
     for &item in items {
-        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok && subType == entitySubtype {
+        if subType, ok:= metaphor_entity_get_entity_subtype(&item); ok && subType == entitySubtype {
             return true
         }
     }
@@ -65,7 +65,7 @@ inventory_getItemsOfSubtype :: proc(entity: ^Inventory, entitySubtype: string) -
     defer delete(items)
     result:= make([dynamic]Item)
     for &item in items {
-        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok && subType == entitySubtype {
+        if subType, ok:= metaphor_entity_get_entity_subtype(&item); ok && subType == entitySubtype {
             append(&result, item)
         }
     }
@@ -78,7 +78,7 @@ inventory_getItemStacks :: proc(entity: ^Inventory) -> [dynamic]ItemStack {
     items:= inventory_getItems(entity)
     defer delete(items)
     for &item in items {
-        if subType, ok:= metaphorEntity_getEntitySubtype(&item); ok {
+        if subType, ok:= metaphor_entity_get_entity_subtype(&item); ok {
             if _, ok = stackMap[subType]; !ok {
                 stackMap[subType] = ItemStack {
                     inventory = entity^,

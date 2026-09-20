@@ -4,7 +4,7 @@ import "../provision"
 
 ITEM_ID :: distinct provision.Entity_Id
 
-Item :: distinct MetaphorEntity(ITEM_ID)
+Item :: distinct Metaphor_Entity(ITEM_ID)
 
 ItemInitializer :: distinct proc(^Item)
 
@@ -32,6 +32,6 @@ item_remove :: proc(entity: ^Item) {
         return
     }
     item_setContainer(entity, nil)
-    metaphorEntity_remove(entity)
+    metaphor_entity_remove(entity)
 }
 

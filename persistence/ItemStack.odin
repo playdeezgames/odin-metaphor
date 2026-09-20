@@ -18,7 +18,7 @@ itemStack_getItems :: proc(itemStack: ^ItemStack) -> [dynamic]Item {
     defer delete(candidates)
     result:= make([dynamic]Item)
     for &candidate in candidates {
-        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+        if itemType, ok := metaphor_entity_get_entity_subtype(&candidate); ok && itemType == itemStack.itemType {
             append(&result, candidate)
         }
     }
@@ -30,7 +30,7 @@ itemStack_getCount :: proc(itemStack: ^ItemStack) -> int {
     defer delete(candidates)
     result: int = 0
     for &candidate in candidates {
-        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+        if itemType, ok := metaphor_entity_get_entity_subtype(&candidate); ok && itemType == itemStack.itemType {
             result += 1
         }
     }
@@ -41,7 +41,7 @@ itemStack_getTop :: proc(itemStack: ^ItemStack) -> (Item, bool) {
     candidates := inventory_getItems(&itemStack.inventory)
     defer delete(candidates)
     for &candidate in candidates {
-        if itemType, ok := metaphorEntity_getEntitySubtype(&candidate); ok && itemType == itemStack.itemType {
+        if itemType, ok := metaphor_entity_get_entity_subtype(&candidate); ok && itemType == itemStack.itemType {
             return candidate, true
         }
     }

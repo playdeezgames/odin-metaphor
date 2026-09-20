@@ -22,7 +22,7 @@ main :: proc () {
     characters:= persistence.location_getOtherCharacters(&location, &character)
     defer delete(characters)
     for &character in characters {
-        name, _:= persistence.metaphorEntity_getName(&character)
+        name, _:= persistence.metaphor_entity_get_name(&character)
         fmt.println(name)
     }
 }
