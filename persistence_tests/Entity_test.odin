@@ -269,3 +269,44 @@ test_entity_get_dimension_maximum :: proc(t: ^testing.T) {
 
     testing.expect(t, actual == max(f64))
 }
+
+@(test)
+test_entity_is_counter_minimum_not_exist :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    COUNTER_NAME : provision.Counter_Id : "COUNTER_NAME"
+
+    actual, ok:= persistence.entity_is_counter_minimum(&sut, COUNTER_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, !ok)
+}
+
+@(test)
+test_entity_is_counter_minimum_exist_success :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    COUNTER_NAME : provision.Counter_Id : "COUNTER_NAME"
+    persistence.entity_set_counter(&sut, COUNTER_NAME, min(i32))
+
+    actual, ok:= persistence.entity_is_counter_minimum(&sut, COUNTER_NAME)
+    testing.expect(t, actual)
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_is_counter_minimum_exist_fail :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    COUNTER_NAME : provision.Counter_Id : "COUNTER_NAME"
+    persistence.entity_set_counter(&sut, COUNTER_NAME, max(i32))
+
+    actual, ok:= persistence.entity_is_counter_minimum(&sut, COUNTER_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, ok)
+}
