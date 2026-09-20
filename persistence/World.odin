@@ -67,9 +67,9 @@ world_createLocation_full :: proc(world: ^provision.World_Data, entitySubtype: s
     world.entities[entityId] = {}
     provision.entity_data_init(&world.entities[entityId], ENTITY_TYPES_LOCATION)
     result, _ := world_getLocation(world, LOCATION_ID(entityId))
-    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
-    entity_setMetadata(result.entityData, METADATAS_NAME, name)
-    entity_addToYokage(world, YOKAGES_LOCATIONS, entityId)
+    entity_set_metadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    entity_set_metadata(result.entityData, METADATAS_NAME, name)
+    entity_add_to_yokage(world, YOKAGES_LOCATIONS, entityId)
     if initializer != nil {
         initializer(&result)
     }
@@ -156,7 +156,7 @@ world_getCharacter :: proc(world: ^provision.World_Data, characterId: CHARACTER_
 
 world_getAvatar :: proc(world: ^provision.World_Data) -> (result: Character, ok: bool) {
     entityId: provision.Entity_Id
-    entityId, ok = entity_getYoke(world, YOKES_AVATAR)
+    entityId, ok = entity_get_yoke(world, YOKES_AVATAR)
     if !ok {
         return {}, false
     }
@@ -164,11 +164,11 @@ world_getAvatar :: proc(world: ^provision.World_Data) -> (result: Character, ok:
 }
 
 world_setAvatar :: proc(world: ^provision.World_Data, characterId: CHARACTER_ID) {
-    entity_setYoke(world, YOKES_AVATAR, provision.Entity_Id(characterId))
+    entity_set_yoke(world, YOKES_AVATAR, provision.Entity_Id(characterId))
 }
 
 world_clearAvatar :: proc(world: ^provision.World_Data) {
-    entity_clearYoke(world, YOKES_AVATAR)
+    entity_clear_yoke(world, YOKES_AVATAR)
 }
 
 world_createMap :: proc(world: ^provision.World_Data, entitySubtype: string, name:string, columns: i32, rows: i32, initializer: MapInitializer) -> Map {
@@ -176,11 +176,11 @@ world_createMap :: proc(world: ^provision.World_Data, entitySubtype: string, nam
     world.entities[entityId] = {}
     provision.entity_data_init(&world.entities[entityId], ENTITY_TYPES_MAP)
     result, _ := world_getMap(world, MAP_ID(entityId))
-    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
-    entity_setMetadata(result.entityData, METADATAS_NAME, name)
-    entity_setCounter(result.entityData, COUNTERS_COLUMNS, columns)
-    entity_setCounter(result.entityData, COUNTERS_ROWS, rows)
-    entity_addToYokage(world, YOKAGES_MAPS, entityId)
+    entity_set_metadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    entity_set_metadata(result.entityData, METADATAS_NAME, name)
+    entity_set_counter(result.entityData, COUNTERS_COLUMNS, columns)
+    entity_set_counter(result.entityData, COUNTERS_ROWS, rows)
+    entity_add_to_yokage(world, YOKAGES_MAPS, entityId)
     if initializer != nil {
         initializer(&result)
     }

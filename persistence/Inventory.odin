@@ -10,12 +10,12 @@ Inventory :: distinct Metaphor_Entity(INVENTORY_ID)
 InventoryInitializer :: distinct proc(^Inventory)
 
 inventory_hasItems :: proc(entity: ^Inventory) -> bool {
-    yokage:= entity_getYokage(entity.entityData, YOKAGES_ITEMS)
+    yokage:= entity_get_yokage(entity.entityData, YOKAGES_ITEMS)
     return len(yokage) > 0
 }
 
 inventory_getItems :: proc(entity: ^Inventory) -> [dynamic]Item {
-    yokage:= entity_getYokage(entity.entityData, YOKAGES_ITEMS)
+    yokage:= entity_get_yokage(entity.entityData, YOKAGES_ITEMS)
     result:= make([dynamic]Item, 0, len(yokage))
     for itemId, _ in yokage {
         if item, ok:= world_getItem(entity.worldData, ITEM_ID(itemId)); ok {
@@ -32,7 +32,7 @@ inventory_remove :: proc(entity: ^Inventory) {
     for &item in inventory_getItems(entity) {
         item_remove(&item)
     }
-    entity_removeFromYokage(entity.worldData, YOKAGES_INVENTORIES, provision.Entity_Id(entity.entityId))
+    entity_remove_from_yokage(entity.worldData, YOKAGES_INVENTORIES, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
 }
 
@@ -42,8 +42,8 @@ inventory_createItem :: proc(entity: ^Inventory, entitySubtype: string, name: st
     provision.entity_data_init(&entity.worldData.entities[entityId], ENTITY_TYPES_ITEM)
     result, _ := world_getItem(entity.worldData, ITEM_ID(entityId))
     item_setContainer(&result, entity)
-    entity_setMetadata(result.entityData, METADATAS_NAME, name)
-    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    entity_set_metadata(result.entityData, METADATAS_NAME, name)
+    entity_set_metadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
     if initialize != nil {
         initialize(&result)
     }

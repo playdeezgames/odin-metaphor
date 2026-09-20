@@ -10,8 +10,8 @@ Map :: distinct Metaphor_Entity(MAP_ID)
 MapInitializer :: distinct proc(^Map)
 
 map_getSize :: proc(entity: ^Map) -> (columns, rows: i32, ok:bool) {
-    if columns, ok = entity_getCounter(entity.entityData, COUNTERS_COLUMNS); ok {
-        if rows, ok = entity_getCounter(entity.entityData, COUNTERS_ROWS); ok {
+    if columns, ok = entity_get_counter(entity.entityData, COUNTERS_COLUMNS); ok {
+        if rows, ok = entity_get_counter(entity.entityData, COUNTERS_ROWS); ok {
             return columns, rows, ok
         }
     }
@@ -19,7 +19,7 @@ map_getSize :: proc(entity: ^Map) -> (columns, rows: i32, ok:bool) {
 }
 
 map_getLocations :: proc(entity: ^Map) -> [dynamic]Location {
-    yokage:= entity_getYokage(entity.entityData, YOKAGES_LOCATIONS)
+    yokage:= entity_get_yokage(entity.entityData, YOKAGES_LOCATIONS)
     result:= make([dynamic]Location)
     for locationId, _ in yokage {
         if location, ok:= world_getLocation(entity.worldData, LOCATION_ID(locationId)); ok {
@@ -33,13 +33,13 @@ map_remove :: proc(entity: ^Map) {
     if entity == nil || entity.entityData == nil {
         return
     }
-    yokage:= entity_getYokage(entity.entityData, YOKAGES_LOCATIONS)
+    yokage:= entity_get_yokage(entity.entityData, YOKAGES_LOCATIONS)
     for locationId, _ in yokage {
         if location, ok:= world_getLocation(entity.worldData, LOCATION_ID(locationId)); ok {
             location_remove(&location)
         }
     }
-    entity_removeFromYokage(entity.worldData, YOKAGES_MAPS, provision.Entity_Id(entity.entityId))
+    entity_remove_from_yokage(entity.worldData, YOKAGES_MAPS, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
 }
 
@@ -48,13 +48,13 @@ map_createLocation :: proc(entity: ^Map, entitySubtype: string, name:string, col
     entity.worldData.entities[entityId] = {}
     provision.entity_data_init(&entity.worldData.entities[entityId], ENTITY_TYPES_LOCATION)
     result, _ := world_getLocation(entity.worldData, LOCATION_ID(entityId))
-    entity_setCounter(result.entityData, COUNTERS_COLUMN, column)
-    entity_setCounter(result.entityData, COUNTERS_ROW, row)
-    entity_setMetadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
-    entity_setMetadata(result.entityData, METADATAS_NAME, name)
-    entity_addToYokage(entity.worldData, YOKAGES_LOCATIONS, entityId)
-    entity_setYoke(result.entityData, YOKES_MAP, provision.Entity_Id(entity.entityId))
-    entity_addToYokage(entity.entityData, YOKAGES_LOCATIONS, entityId)
+    entity_set_counter(result.entityData, COUNTERS_COLUMN, column)
+    entity_set_counter(result.entityData, COUNTERS_ROW, row)
+    entity_set_metadata(result.entityData, METADATAS_SUBTYPE, entitySubtype)
+    entity_set_metadata(result.entityData, METADATAS_NAME, name)
+    entity_add_to_yokage(entity.worldData, YOKAGES_LOCATIONS, entityId)
+    entity_set_yoke(result.entityData, YOKES_MAP, provision.Entity_Id(entity.entityId))
+    entity_add_to_yokage(entity.entityData, YOKAGES_LOCATIONS, entityId)
     if initializer != nil {
         initializer(&result)
     }
@@ -62,12 +62,12 @@ map_createLocation :: proc(entity: ^Map, entitySubtype: string, name:string, col
 }
 
 map_getLocation :: proc(entity: ^Map, column, row: i32) -> (Location, bool) {
-    yokage:= entity_getYokage(entity.entityData, YOKAGES_LOCATIONS)
+    yokage:= entity_get_yokage(entity.entityData, YOKAGES_LOCATIONS)
     for entityId, _ in yokage{
         if location, ok:= world_getLocation(entity.worldData, LOCATION_ID(entityId)); ok {
             value: i32
-            if value, ok = entity_getCounter(location.entityData, COUNTERS_COLUMN); ok && value == column {
-                if value,ok = entity_getCounter(location.entityData, COUNTERS_ROW); ok && value == row {
+            if value, ok = entity_get_counter(location.entityData, COUNTERS_COLUMN); ok && value == column {
+                if value,ok = entity_get_counter(location.entityData, COUNTERS_ROW); ok && value == row {
                     return location, true
                 }
             }
