@@ -20,7 +20,7 @@ test_raw_entity_data_values :: proc(t: ^testing.T) {
 }
 
 @(test)
-test_entity_data_ctor_dtor :: proc(t: ^testing.T) {
+test_entity_data_init_destroy :: proc(t: ^testing.T) {
     ENTITY_TYPE :: "ENTITY_TYPE"
     sut: provision.Entity_Data
     provision.entity_data_init(&sut, ENTITY_TYPE)
