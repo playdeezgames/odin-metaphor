@@ -245,3 +245,27 @@ test_entity_change_dimension_succeed :: proc(t: ^testing.T) {
     has_actual:= persistence.entity_has_dimension(&sut, DIMENSION_NAME)
     testing.expect(t, has_actual)
 }
+
+@(test)
+test_entity_get_dimension_minimum :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    actual := persistence.entity_get_dimension_minimum(&sut, DIMENSION_NAME)
+
+    testing.expect(t, actual == min(f64))
+}
+
+@(test)
+test_entity_get_dimension_maximum :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    actual := persistence.entity_get_dimension_maximum(&sut, DIMENSION_NAME)
+
+    testing.expect(t, actual == max(f64))
+}
