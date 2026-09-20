@@ -32,6 +32,7 @@ inventory_remove :: proc(entity: ^Inventory) {
     for &item in inventory_getItems(entity) {
         item_remove(&item)
     }
+    entity_removeFromYokage(entity.worldData, YOKAGES_INVENTORIES, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
 }
 

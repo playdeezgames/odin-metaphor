@@ -32,6 +32,7 @@ item_remove :: proc(entity: ^Item) {
         return
     }
     item_setContainer(entity, nil)
+    entity_removeFromYokage(entity.worldData, YOKAGES_ITEMS, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
 }
 

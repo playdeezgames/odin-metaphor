@@ -39,6 +39,7 @@ map_remove :: proc(entity: ^Map) {
             location_remove(&location)
         }
     }
+    entity_removeFromYokage(entity.worldData, YOKAGES_MAPS, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
 }
 

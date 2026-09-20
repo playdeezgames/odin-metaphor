@@ -70,8 +70,9 @@ location_getRow :: proc(entity: ^Location) -> (result: i32, ok: bool) {
 
 location_remove :: proc(entity: ^Location) {
     location_setMap(entity, nil)
-    entity.entityData = nil
-    delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))
+    //TODO: clean up characters!
+    entity_removeFromYokage(entity.worldData, YOKAGES_LOCATIONS, provision.Entity_Id(entity.entityId))
+    metaphor_entity_remove(entity)
 }
 
 location_createCharacter :: proc(entity: ^Location, entitySubtype: string, name: string, initialize: CharacterInitializer) -> Character {

@@ -61,4 +61,6 @@ feature_remove :: proc(entity: ^Feature) {
         entity_clearYoke(entity.entityData, YOKES_TWIN)
         feature_remove(&twin)
     }
+    entity_removeFromYokage(entity.worldData, YOKAGES_FEATURES, provision.Entity_Id(entity.entityId))
+    metaphor_entity_remove(entity)
 }

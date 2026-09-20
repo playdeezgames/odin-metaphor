@@ -49,9 +49,6 @@ character_remove :: proc(entity: ^Character) {
     inventory:= metaphor_entity_get_inventory(entity)
     inventory_remove(&inventory)
     character_setLocation(entity, nil)
+    entity_removeFromYokage(entity.worldData, YOKAGES_CHARACTERS, provision.Entity_Id(entity.entityId))
     metaphor_entity_remove(entity)
-    if entityData, ok:= entity.worldData.entities[provision.Entity_Id(entity.entityId)]; ok {
-        provision.entity_data_destroy(&entityData)
-        delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))
-    }
 }

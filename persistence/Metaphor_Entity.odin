@@ -119,6 +119,7 @@ metaphor_entity_get_inventory :: proc(entity: ^Metaphor_Entity($T)) -> Inventory
     inventoryId, ok:= entity_getYoke(entity.entityData, YOKES_INVENTORY)
     if !ok {
         inventoryId= provision.Entity_Id(uuid.generate_v4())
+        entity_addToYokage(entity.worldData, YOKAGES_INVENTORIES, inventoryId)
         entity.worldData.entities[inventoryId] = {}
         provision.entity_data_init(&entity.worldData.entities[inventoryId], ENTITY_TYPES_INVENTORY)
     }
@@ -160,6 +161,8 @@ metaphor_entity_create_verb_default :: proc(entity: ^Metaphor_Entity($T), entity
 metaphor_entity_create_verb :: proc{metaphor_entity_create_verb_default, metaphor_entity_create_verb_full}
 
 metaphor_entity_remove :: proc(entity: ^Metaphor_Entity($T)) {
+    //TODO: remove verbs
+    //TODO: remove inventory
     if entityData, ok:= entity.worldData.entities[provision.Entity_Id(entity.entityId)]; ok {
         provision.entity_data_destroy(&entityData)
         delete_key(&entity.worldData.entities, provision.Entity_Id(entity.entityId))
