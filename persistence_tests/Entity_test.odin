@@ -525,3 +525,67 @@ test_entity_remove_from_yokage :: proc(t: ^testing.T) {
     testing.expect(t, len(actual) == 0)
     testing.expect(t, len(sut.yokages) == 1)
 }
+
+@(test)
+test_entity_minimize_counter :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    COUNTER_NAME : provision.Counter_Id : "COUNTER_NAME"
+
+    persistence.entity_minimize_counter(&sut, COUNTER_NAME)
+
+    actual, ok:= persistence.entity_get_counter(&sut, COUNTER_NAME)
+
+    testing.expect(t, actual == min(i32))
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_maximize_counter :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    COUNTER_NAME : provision.Counter_Id : "COUNTER_NAME"
+
+    persistence.entity_maximize_counter(&sut, COUNTER_NAME)
+
+    actual, ok:= persistence.entity_get_counter(&sut, COUNTER_NAME)
+
+    testing.expect(t, actual == max(i32))
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_minimize_dimension :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+
+    persistence.entity_minimize_dimension(&sut, DIMENSION_NAME)
+
+    actual, ok:= persistence.entity_get_dimension(&sut, DIMENSION_NAME)
+
+    testing.expect(t, actual == min(f64))
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_maximize_dimension :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+
+    persistence.entity_maximize_dimension(&sut, DIMENSION_NAME)
+
+    actual, ok:= persistence.entity_get_dimension(&sut, DIMENSION_NAME)
+
+    testing.expect(t, actual == max(f64))
+    testing.expect(t, ok)
+}
