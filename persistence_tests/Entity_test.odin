@@ -351,3 +351,85 @@ test_entity_is_counter_maximum_exist_fail :: proc(t: ^testing.T) {
     testing.expect(t, actual)
     testing.expect(t, ok)
 }
+
+@(test)
+test_entity_is_dimension_minimum_not_exist :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+
+    actual, ok:= persistence.entity_is_dimension_minimum(&sut, DIMENSION_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, !ok)
+}
+
+@(test)
+test_entity_is_dimension_minimum_exist_success :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    persistence.entity_set_dimension(&sut, DIMENSION_NAME, min(f64))
+
+    actual, ok:= persistence.entity_is_dimension_minimum(&sut, DIMENSION_NAME)
+    testing.expect(t, actual)
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_is_dimension_minimum_exist_fail :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    persistence.entity_set_dimension(&sut, DIMENSION_NAME, max(f64))
+
+    actual, ok:= persistence.entity_is_dimension_minimum(&sut, DIMENSION_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_is_dimension_maximum_not_exist :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+
+    actual, ok:= persistence.entity_is_dimension_maximum(&sut, DIMENSION_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, !ok)
+}
+
+@(test)
+test_entity_is_dimension_maximum_exist_success :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    persistence.entity_set_dimension(&sut, DIMENSION_NAME, min(f64))
+
+    actual, ok:= persistence.entity_is_dimension_maximum(&sut, DIMENSION_NAME)
+    testing.expect(t, !actual)
+    testing.expect(t, ok)
+}
+
+@(test)
+test_entity_is_dimension_maximum_exist_fail :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    DIMENSION_NAME : provision.Dimension_Id : "DIMENSION_NAME"
+    persistence.entity_set_dimension(&sut, DIMENSION_NAME, max(f64))
+
+    actual, ok:= persistence.entity_is_dimension_maximum(&sut, DIMENSION_NAME)
+    testing.expect(t, actual)
+    testing.expect(t, ok)
+}
