@@ -481,3 +481,47 @@ test_entity_clear_yoke :: proc(t: ^testing.T) {
     testing.expect(t, actual == {})
     testing.expect(t, !ok)
 }
+
+@(test)
+test_entity_get_yokage :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    YOKAGE_NAME : provision.Yokage_Id : "YOKAGE_NAME"
+    actual := persistence.entity_get_yokage(&sut, YOKAGE_NAME)
+
+    testing.expect(t, len(actual) == 0)
+    testing.expect(t, len(sut.yokages) == 1)
+}
+
+@(test)
+test_entity_add_to_yokage :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    YOKAGE_NAME : provision.Yokage_Id : "YOKAGE_NAME"
+    entity_id := provision.Entity_Id({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
+    persistence.entity_add_to_yokage(&sut, YOKAGE_NAME, entity_id)
+    actual := persistence.entity_get_yokage(&sut, YOKAGE_NAME)
+
+    testing.expect(t, len(actual) == 1)
+    testing.expect(t, len(sut.yokages) == 1)
+}
+
+@(test)
+test_entity_remove_from_yokage :: proc(t: ^testing.T) {
+    sut : provision.Entity_Data
+    provision.entity_data_init(&sut, persistence.ENTITY_TYPES_CHARACTER)
+    defer provision.entity_data_destroy(&sut)
+
+    YOKAGE_NAME : provision.Yokage_Id : "YOKAGE_NAME"
+    entity_id := provision.Entity_Id({0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15})
+    persistence.entity_add_to_yokage(&sut, YOKAGE_NAME, entity_id)
+    persistence.entity_remove_from_yokage(&sut, YOKAGE_NAME, entity_id)
+    actual := persistence.entity_get_yokage(&sut, YOKAGE_NAME)
+
+    testing.expect(t, len(actual) == 0)
+    testing.expect(t, len(sut.yokages) == 1)
+}
