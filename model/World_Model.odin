@@ -3,12 +3,12 @@ package model
 import "../provision"
 
 World_Model :: struct {
-    world: provision.World_Data,
+    world: ^provision.World_Data,
     quittable: bool
 }
 
 world_model_initialize :: proc(model: ^World_Model, world: ^provision.World_Data, quittable:bool) {
-    model.world = world^
+    model.world = world
     model.quittable = quittable
 }
 
@@ -58,4 +58,3 @@ world_model_is_quittable :: proc(model: ^World_Model) -> bool {
 //         End Try
 //         Return New WorldModel(entity, quittable)
 //     End Function
-// End Class
