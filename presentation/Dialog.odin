@@ -1,6 +1,6 @@
 package presentation
 
-Dialog :: struct {
-    run: Dialog_Prompt_Generator
+Dialog :: struct($T: typeid) {
+    run: proc(^T) -> Dialog_Prompt(T)
 }
 
