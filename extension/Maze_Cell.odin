@@ -1,7 +1,7 @@
 package extension
 
 import "base:runtime"
-import "vendor:directx/d3d_common"
+
 Maze_Cell :: struct($T: typeid) {
     neighbors : map[T]^Maze_Cell(T),
     doors: map[T]^Maze_Door
@@ -18,8 +18,7 @@ maze_cell_destroy :: proc(cell: ^Maze_Cell($T)) {
 }
 
 maze_cell_has_neighbor :: proc(cell: ^Maze_Cell($T), direction: T) -> bool {
-    _, ok := maze_cell_get_neighbor(cell, direction)
-    return ok
+    return maze_cell_get_neighbor(cell, direction) != nil
 }
 
 maze_cell_set_neighbor :: proc(cell: ^Maze_Cell($T), direction:T, neighbor: ^Maze_Cell(T)) {

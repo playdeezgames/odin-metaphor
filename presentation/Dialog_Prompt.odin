@@ -5,6 +5,8 @@ Dialog_Prompt :: struct {
     prompt_type : Dialog_Prompt_Type
 }
 
+Dialog_Prompt_Generator :: distinct proc()->Dialog_Prompt
+
 Dialog_Prompt_Type :: union {
     Choose_Prompt,
     String_Prompt,
@@ -70,13 +72,19 @@ dialog_prompt_initialize_double :: proc(
         prompt.prompt_type = Double_Prompt{from_double = from_double}
 }
 
-
-//     Public ReadOnly Property Choices As String() Implements IDialogPrompt.Choices
-//         Get
-//             Return _choices.Select(Function(x) x.Text).ToArray
-//         End Get
-//     End Property
-
+dialog_prompt_get_choices :: proc(prompt: ^Dialog_Prompt) -> ([]string, bool) {
+    #partial switch prompt_type in prompt.prompt_type {
+        case Choose_Prompt:
+            result:= make([dynamic]string,0,len(prompt_type.choices))
+            for choice in prompt_type.choices {
+                if choice.enabled {
+                    append(&result, choice.text)
+                }
+            }
+            return result[:], true
+    }
+    return {}, false
+}
 
 //     Public ReadOnly Property Title As String Implements IDialogPrompt.Title
 //     Private ReadOnly _choices As IDialogChoice()
