@@ -17,15 +17,15 @@ Choose_Prompt :: struct($T: typeid) {
 }
 
 String_Prompt :: struct($T: typeid) {
-    from_string: proc(^T, string) -> Dialog(T) 
+    from_string: proc(^T, string) -> (Dialog(T) , bool)
 }
 
 Integer_Prompt :: struct($T: typeid) {
-    from_integer: proc(^T, i32) -> Dialog(T)
+    from_integer: proc(^T, i32) -> (Dialog(T) , bool)
 }
 
 Double_Prompt :: struct($T: typeid) {
-    from_double: proc(^T, f64) -> Dialog(T)
+    from_double: proc(^T, f64) -> (Dialog(T) , bool)
 }
 
 dialog_prompt_initialize_choice :: proc(
@@ -103,6 +103,9 @@ dialog_prompt_get_choices :: proc(prompt: ^Dialog_Prompt($T)) -> ([]string, bool
 //                 Throw New NotImplementedException
 //         End Select
 //     End Function
+dialog_prompt_respond_text :: proc(prompt: ^Dialog_Prompt($T), model: ^T, choice: int) -> (Dialog(T), bool) {
+
+}
 
 //     Public Shared Function CreateChoicePrompt(
 //                                              title As String,
