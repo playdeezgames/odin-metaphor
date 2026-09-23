@@ -15,28 +15,53 @@ Game_State :: struct {
 }
 
 main :: proc () {
-    dialog:= presentation.Dialog(Game_State) {
-        run = main_menu
-    }
+    dialog_state: presentation.Dialog_State(Game_State) = presentation.Dialog(Game_State) { run = main_menu}
 
     game_state:= Game_State{}
 
     running:= true
     for running {
-        prompt: presentation.Dialog_Prompt(Game_State)
-        if prompt, running = dialog.run(&game_state); running {
-            fmt.print(prompt.title)
-            switch &prompt_type in prompt.prompt_type {
-                case presentation.Choose_Prompt(Game_State):
-                    dialog, running = input_choice(&prompt_type, &game_state)
-                case presentation.String_Prompt(Game_State):
-                    dialog, running = input_string(&prompt_type, &game_state)
-                case presentation.Integer_Prompt(Game_State):
-                    dialog, running = input_int(&prompt_type, &game_state)
-                case presentation.Double_Prompt(Game_State):
-                    dialog, running = input_double(&prompt_type, &game_state)
-            }
+        switch &state in dialog_state {
+            case presentation.Dialog(Game_State):
+                dialog_state, running = state.run(&game_state)
+            case presentation.Dialog_Prompt(Game_State):
+                valid: bool = false
+                next_dialog: presentation.Dialog(Game_State)
+                switch &prompt_type in state.prompt_type {
+                     case presentation.Choose_Prompt(Game_State):
+                         next_dialog, valid = input_choice(&prompt_type, &game_state)
+                     case presentation.String_Prompt(Game_State):
+                         next_dialog, valid = input_string(&prompt_type, &game_state)
+                     case presentation.Integer_Prompt(Game_State):
+                         next_dialog, valid = input_int(&prompt_type, &game_state)
+                     case presentation.Double_Prompt(Game_State):
+                         next_dialog, valid = input_double(&prompt_type, &game_state)
+                }
+                if valid {
+                    dialog_state = next_dialog
+                }
         }
+
+
+        // prompt: presentation.Dialog_Prompt(Game_State)
+        // if prompt, running = dialog.run(&game_state); running {
+        //     valid: bool = false
+        //     next_dialog: presentation.Dialog(Game_State)
+        //     for !valid {
+        //         fmt.print(prompt.title)
+        //         switch &prompt_type in prompt.prompt_type {
+        //             case presentation.Choose_Prompt(Game_State):
+        //                 next_dialog, valid = input_choice(&prompt_type, &game_state)
+        //             case presentation.String_Prompt(Game_State):
+        //                 next_dialog, valid = input_string(&prompt_type, &game_state)
+        //             case presentation.Integer_Prompt(Game_State):
+        //                 next_dialog, valid = input_int(&prompt_type, &game_state)
+        //             case presentation.Double_Prompt(Game_State):
+        //                 next_dialog, valid = input_double(&prompt_type, &game_state)
+        //         }
+        //     }
+        //     dialog = next_dialog
+        // }
     }
 }
 
@@ -45,16 +70,21 @@ main_menu :: proc(state: ^Game_State) -> (presentation.Dialog_Prompt(Game_State)
 
     result : presentation.Dialog_Prompt(Game_State)
     choice: presentation.Dialog_Choice(Game_State)
-    presentation.dialog_choice_init(&choice, true, "Quit", exit_game)
+    presentation.dialog_choice_init(&choice, true, "Quit", choose_quit)
     choices:= make([dynamic]presentation.Dialog_Choice(Game_State))
     append(&choices, choice)
     presentation.dialog_prompt_initialize_choice(&result, "Now What?", choices[:])
     return result, true
 }
 
-exit_game :: proc(state: ^Game_State) -> (presentation.Dialog(Game_State), bool) {
+choose_quit :: proc(state: ^Game_State) -> (presentation.Dialog(Game_State), bool) {
+    return presentation.Dialog(Game_State) { run = quit_metaphor}, true
+}
+
+quit_metaphor :: proc(state: ^Game_State) -> (presentation.Dialog_Prompt(Game_State), bool) {
     return {}, false
 }
+
 
 input_string :: proc(prompt_type: ^presentation.String_Prompt(Game_State), state:^Game_State) -> (presentation.Dialog(Game_State), bool) {
     reader: bufio.Reader
@@ -76,17 +106,16 @@ input_int :: proc(prompt_type: ^presentation.Integer_Prompt(Game_State), state:^
     bufio.reader_init(&reader, os.to_stream(os.stdin))
     defer bufio.reader_destroy(&reader)
 
-    for {
-        line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
-        if err != nil {
-            return {}, false
-        }
-        cleaned := strings.trim_space(line)
-        val, ok := strconv.parse_int(cleaned)
-        if ok {
-            return prompt_type.from_integer(state, i32(val))
-        }
+    line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
+    if err != nil {
+        return {}, false
     }
+    cleaned := strings.trim_space(line)
+    val, ok := strconv.parse_int(cleaned)
+    if ok {
+        return prompt_type.from_integer(state, i32(val))
+    }
+    return {}, false
 }
 
 input_double :: proc(prompt_type: ^presentation.Double_Prompt(Game_State), state:^Game_State) -> (presentation.Dialog(Game_State), bool) {
@@ -95,17 +124,16 @@ input_double :: proc(prompt_type: ^presentation.Double_Prompt(Game_State), state
     bufio.reader_init(&reader, os.to_stream(os.stdin))
     defer bufio.reader_destroy(&reader)
 
-    for {
-        line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
-        if err != nil {
-            return {}, false
-        }
-        cleaned := strings.trim_space(line)
-        val, ok := strconv.parse_f64(cleaned)
-        if ok {
-            return prompt_type.from_double(state, val)
-        }
+    line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
+    if err != nil {
+        return {}, false
     }
+    cleaned := strings.trim_space(line)
+    val, ok := strconv.parse_f64(cleaned)
+    if ok {
+        return prompt_type.from_double(state, val)
+    }
+    return {}, false
 }
 
 input_choice :: proc(prompt_type: ^presentation.Choose_Prompt(Game_State), state:^Game_State) -> (presentation.Dialog(Game_State), bool) {
@@ -119,17 +147,16 @@ input_choice :: proc(prompt_type: ^presentation.Choose_Prompt(Game_State), state
     bufio.reader_init(&reader, os.to_stream(os.stdin))
     defer bufio.reader_destroy(&reader)
 
-    for {
-        line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
-        if err != nil {
-            return {}, false
-        }
-        cleaned := strings.trim_space(line)
-        val, ok := strconv.parse_int(cleaned)
-        if ok && val >=1 && val <= len(prompt_type.choices){
-            return prompt_type.choices[val-1].next_dialog_generator(state)
-        }
+    line, err := bufio.reader_read_string(&reader, '\n', context.temp_allocator)
+    if err != nil {
+        return {}, false
     }
+    cleaned := strings.trim_space(line)
+    val, ok := strconv.parse_int(cleaned)
+    if ok && val >=1 && val <= len(prompt_type.choices){
+        return prompt_type.choices[val-1].next_dialog_generator(state)
+    }
+    return {}, false
 }
 
     // for _ in 0..<6 {
