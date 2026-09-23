@@ -15,16 +15,15 @@ Game_State :: struct {
 }
 
 main :: proc () {
-    dialog_state: presentation.Dialog_State(Game_State) = presentation.Dialog(Game_State) { run = main_menu}
-
     game_state:= Game_State{}
-
+    dialog_state: presentation.Dialog_State(Game_State) = presentation.Dialog(Game_State) { run = title_screen}
     running:= true
     for running {
         switch &state in dialog_state {
             case presentation.Dialog(Game_State):
                 dialog_state, running = state.run(&game_state)
             case presentation.Dialog_Prompt(Game_State):
+                fmt.print(state.title)
                 valid: bool = false
                 next_dialog: presentation.Dialog(Game_State)
                 switch &prompt_type in state.prompt_type {
@@ -41,31 +40,16 @@ main :: proc () {
                     dialog_state = next_dialog
                 }
         }
-
-
-        // prompt: presentation.Dialog_Prompt(Game_State)
-        // if prompt, running = dialog.run(&game_state); running {
-        //     valid: bool = false
-        //     next_dialog: presentation.Dialog(Game_State)
-        //     for !valid {
-        //         fmt.print(prompt.title)
-        //         switch &prompt_type in prompt.prompt_type {
-        //             case presentation.Choose_Prompt(Game_State):
-        //                 next_dialog, valid = input_choice(&prompt_type, &game_state)
-        //             case presentation.String_Prompt(Game_State):
-        //                 next_dialog, valid = input_string(&prompt_type, &game_state)
-        //             case presentation.Integer_Prompt(Game_State):
-        //                 next_dialog, valid = input_int(&prompt_type, &game_state)
-        //             case presentation.Double_Prompt(Game_State):
-        //                 next_dialog, valid = input_double(&prompt_type, &game_state)
-        //         }
-        //     }
-        //     dialog = next_dialog
-        // }
     }
 }
 
-main_menu :: proc(state: ^Game_State) -> (presentation.Dialog_Prompt(Game_State), bool) {
+title_screen :: proc(state: ^Game_State) -> (presentation.Dialog_State(Game_State), bool) {
+    fmt.println("Welcome to the Metaphor of SPLORR!!")
+    fmt.println()
+    return presentation.Dialog(Game_State) { run = main_menu}, true
+}
+
+main_menu :: proc(state: ^Game_State) -> (presentation.Dialog_State(Game_State), bool) {
     fmt.println("Main Menu:")
 
     result : presentation.Dialog_Prompt(Game_State)
@@ -81,10 +65,9 @@ choose_quit :: proc(state: ^Game_State) -> (presentation.Dialog(Game_State), boo
     return presentation.Dialog(Game_State) { run = quit_metaphor}, true
 }
 
-quit_metaphor :: proc(state: ^Game_State) -> (presentation.Dialog_Prompt(Game_State), bool) {
+quit_metaphor :: proc(state: ^Game_State) -> (presentation.Dialog_State(Game_State), bool) {
     return {}, false
 }
-
 
 input_string :: proc(prompt_type: ^presentation.String_Prompt(Game_State), state:^Game_State) -> (presentation.Dialog(Game_State), bool) {
     reader: bufio.Reader
