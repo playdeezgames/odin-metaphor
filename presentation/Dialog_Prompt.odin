@@ -17,15 +17,15 @@ Choose_Prompt :: struct($T: typeid) {
 }
 
 String_Prompt :: struct($T: typeid) {
-    from_string: proc(^T, string) -> (Dialog(T) , bool)
+    from_string: proc(^T, string) -> (Dialog_State(T) , bool)
 }
 
 Integer_Prompt :: struct($T: typeid) {
-    from_integer: proc(^T, i32) -> (Dialog(T) , bool)
+    from_integer: proc(^T, i32) -> (Dialog_State(T) , bool)
 }
 
 Double_Prompt :: struct($T: typeid) {
-    from_double: proc(^T, f64) -> (Dialog(T) , bool)
+    from_double: proc(^T, f64) -> (Dialog_State(T) , bool)
 }
 
 dialog_prompt_initialize_choice :: proc(
