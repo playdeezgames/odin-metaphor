@@ -7,6 +7,7 @@ import "core:bufio"
 import "core:os"
 import "core:strings"
 import "core:strconv"
+import "platform"
 
 COUNTER_SATIETY : provision.Counter_Id : "SATIETY"
 
@@ -16,28 +17,35 @@ Game_State :: struct {
 
 main :: proc () {
     game_state:= Game_State{}
-    dialog_state: presentation.Dialog_State(Game_State) = presentation.Dialog(Game_State) { run = title_screen}
-    running:= true
-    for running {
-        switch &state in dialog_state {
+    host:= platform.Host(Game_State) {
+        state = &game_state,
+        dialog_state = presentation.Dialog(Game_State) { run = title_screen},
+        running = true,
+        input_choice = input_choice,
+        input_string = input_string,
+        input_integer = input_int,
+        input_double = input_double
+    }
+    for host.running {
+        switch &state in host.dialog_state {
             case presentation.Dialog(Game_State):
-                dialog_state, running = state.run(&game_state)
+                host.dialog_state, host.running = state.run(&game_state)
             case presentation.Dialog_Prompt(Game_State):
                 fmt.print(state.title)
                 valid: bool = false
                 next_dialog: presentation.Dialog(Game_State)
                 switch &prompt_type in state.prompt_type {
                      case presentation.Choose_Prompt(Game_State):
-                         next_dialog, valid = input_choice(&prompt_type, &game_state)
+                         next_dialog, valid = host.input_choice(&prompt_type, &game_state)
                      case presentation.String_Prompt(Game_State):
-                         next_dialog, valid = input_string(&prompt_type, &game_state)
+                         next_dialog, valid = host.input_string(&prompt_type, &game_state)
                      case presentation.Integer_Prompt(Game_State):
-                         next_dialog, valid = input_int(&prompt_type, &game_state)
+                         next_dialog, valid = host.input_integer(&prompt_type, &game_state)
                      case presentation.Double_Prompt(Game_State):
-                         next_dialog, valid = input_double(&prompt_type, &game_state)
+                         next_dialog, valid = host.input_double(&prompt_type, &game_state)
                 }
                 if valid {
-                    dialog_state = next_dialog
+                    host.dialog_state = next_dialog
                 }
         }
     }
