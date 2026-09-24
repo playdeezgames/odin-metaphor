@@ -23,3 +23,9 @@ dialog_choice_init :: proc(choice: ^Dialog_Choice($T), enabled: bool, text:strin
     choice.text = text
     choice.next_dialog_generator = next_dialog_generator
 }
+
+dialog_choice_make :: proc(enabled: bool, text:string, next_dialog_generator: proc(^$T) -> (Dialog_State(T), bool)) -> Dialog_Choice(T) {
+    result : Dialog_Choice(T)
+    dialog_choice_init(&result, enabled, text, next_dialog_generator)
+    return result
+}
